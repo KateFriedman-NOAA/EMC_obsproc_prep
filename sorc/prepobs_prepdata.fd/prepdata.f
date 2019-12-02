@@ -1324,6 +1324,9 @@ C                 RTMA_RU where minutes here can be 15, 30 or 45.
 C 2018-07-02  S.Melchior-- In function W3FIZZ, added call to UFBINT
 C     routine to pull in HOVI (horizontal visibility) value for mesonet
 C     message types (NC255).
+C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from 
+C        from other countries (e.g. Europe, New Zealand) (NC002018) and
+C        Hong Kong wind profiler data (NC002014).  
 C
 C
 C USAGE:
@@ -1947,17 +1950,18 @@ C           BE 9999 OR BE THE SAME AS JSMASS(X,Y,Z) !!!}
 C                                        (DEF- JSMASS(6,8,10)/480*9999/)
 C
 CC
-C  N O T E -- THE FOLLOWING 4-WORD ARRAYS REFER TO THE 4 WIND PROFILER
+C  N O T E -- THE FOLLOWING 5-WORD ARRAYS REFER TO THE 5 WIND PROFILER
 C              REPORT TYPES POSSIBLE
 C                     1 - NOAA PROFILER NETWORK (NPN)
 C                     2 - PROFILERS ORIGINATING FROM PILOT (PIBAL)
 C                         FORMAT BULLETINS
 C                     3 - COOPERATIVE AGENCY PROFILERS (INCL. NOAA BLP)
 C                     4 - JAPANESE METEOR. AGENCY (JMA) PROFILERS
+C                     5 - OTHER PROFILER WINDS (E.G., FROM HONG KONG)
 CC
 C    PWINDO - TIME WINDOW (+/-) FOR WIND PROFILER REPORTS (IN
-C              HUNDREDTHS OF AN HR) - (MAX IS +/- 12 HRS)   (DEF=4*300.)
-C    PRFLER - PROCESS WIND PROFILER REPORTS?          (DEFAULT=4*.TRUE.)
+C              HUNDREDTHS OF AN HR) - (MAX IS +/- 12 HRS)   (DEF=5*300.)
+C    PRFLER - PROCESS WIND PROFILER REPORTS?          (DEFAULT=5*.TRUE.)
 CC
 C    VWINDO - TIME WINDOW (+/-) FOR VAD WIND REPORTS (IN HUNDREDTHS OF
 C              AN HR) - (MAX IS +/- 12 HRS)               (DEFAULT=300.)
@@ -2938,7 +2942,7 @@ C  IN INTERFACE WITH SUBROUTINE IW3UNPBF
       COMMON/PREVSW/PREVEN
       COMMON/APDNSW/APPEND
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
-      COMMON/PFSWCH/PRFLER(4),PWINDO(4),PROFILERinADPUPA
+      COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/RASSSW/RASS,TWINDO
       common/pstnflg/ipstnflg
       COMMON /BUFRLIB_MISSING/BMISS
@@ -3807,6 +3811,9 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
+C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from
+C        from other countries (e.g. Europe, New Zealand) (NC002018) and
+C        Hong Kong wind profiler data (NC002014).
 C
 C USAGE:    CALL PREP
 C   INPUT FILES:
@@ -3895,7 +3902,7 @@ C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
      $ JPASCD(6),IAWNDO(2)
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
       COMMON/PWSWCH/PWT(5),IQMPW
-      COMMON/PFSWCH/PRFLER(4),PWINDO(4),PROFILERinADPUPA
+      COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/RASSSW/RASS,TWINDO
       COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
      $ obs8_8(2)
@@ -4155,9 +4162,10 @@ C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT PROFLR DUMP
          IF(.NOT.PRFLER(2))  SUBSKP(002,009) = .TRUE.
          IF(.NOT.PRFLER(3))  SUBSKP(002,011) = .TRUE.
          IF(.NOT.PRFLER(4))  SUBSKP(002,013) = .TRUE.
+         IF(.NOT.PRFLER(5))  SUBSKP(002,014) = .TRUE.
 C CHECK TO SEE IF WIND PROFILER DATA SHOULD BE PROCESSED
          IF(SUBSKP(002,007).AND.SUBSKP(002,009).AND.SUBSKP(002,011).AND.
-     $      SUBSKP(002,013))  GO TO 7001
+     $      SUBSKP(002,013).AND.SUBSKP(002,014))  GO TO 7001
       ELSE IF(NN.EQ.6)  THEN
 C CHECK TO SEE IF VAD WIND DATA SHOULD BE PROCESSED
          IF(.NOT.VADWIN)  GO TO 7001
@@ -4472,6 +4480,10 @@ C  IS CENTERED ON (CYCLE TIME, to fraction of an hr if IDATMM non-zero)
                IF(.NOT.SUBSKP(002,013))  THEN
       NAME2 = 'JAPANESE METEOR. AGENCY WIND PROFILER DATA. MINUS & PLUS'
                   PRINT 873, NAME2,PWINDO(4)
+               END IF
+               IF(.NOT.SUBSKP(002,014))  THEN
+      NAME2 = 'HONG KONG WIND PROFILER DATA .............. MINUS & PLUS'
+                  PRINT 873, NAME2,PWINDO(5)
                END IF
             ELSE  IF(NN.EQ.6)  THEN
       NAME2 = 'VAD WIND DATA ............................. MINUS & PLUS'
@@ -5371,7 +5383,7 @@ C$$$
       COMMON/RPTHDR/SUBSET_d,STNID,HDR(2:MXWRDH),alon_8,alat_8
       COMMON/UNITNO/NFILE,IUNIT(28)
       COMMON/LAUNCH/ALNCH
-      COMMON/PFSWCH/PRFLER(4),PWINDO(4),PROFILERinADPUPA
+      COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/XTRHD2/CRES1,CRES2,CBULL
       common/direct/obs3(5,mxblvl,7),obs2(numobs2),nobs3(7),rdata2(25),
      $ obs8_8(2)
@@ -9620,7 +9632,7 @@ C$$$
       COMMON/PARM6/MODPRT,IFLUA,STNPRT(3)
       COMMON/LFMSFC/LFMAXI,LFMAXJ,FMESHL,FLONVT,FPOLEI,FPOLEJ,MARLND,
      $ JSURFM(12),JSURFW(12),FWINDO(12),PFRALT,npkrpt(12)
-      COMMON/PFSWCH/PRFLER(4),PWINDO(4),PROFILERinADPUPA
+      COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
@@ -19737,6 +19749,7 @@ C 2017-01-11  C. Hill -- The default value for IACFTH(9) is changed from
 C             3050 to 16500 meters to provide capability to process the
 C             full vertical profile of TAMDARB reports (made available
 C             by ARINC 01/17/2017). 
+C 2019-12-02 J. Dong -- Modified to handle Hong Kong wind profiler data (NC002014).
 C
 C REMARKS: THIS IS UPDATED AS NEEDED TO ACCOUNT FOR CHANGES IN COMMON
 C   BLOCKS AND FOR NEW COMMON BLOCKS AS THEY ARE ADDED.  NO PROGRAM
@@ -19803,7 +19816,7 @@ C$$$
       COMMON/APDNSW/APPEND
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
       COMMON/LAUNCH/ALNCH
-      COMMON/PFSWCH/PRFLER(4),PWINDO(4),PROFILERinADPUPA
+      COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/RASSSW/RASS,TWINDO
       COMMON/DRIFT/DFTLON(MXLVL),DFTLAT(MXLVL),DFTTIM(MXLVL)
       COMMON/SBDRIFT/ZDRIFT(MXLVL),TDRIFT(MXLVL),TDRIFTLL(MXLVL),
@@ -19820,7 +19833,7 @@ C$$$
      $ SATMST/80*.FALSE./,MARLND/.FALSE./,RECCON/.TRUE./,
      $ SWNLND/480*.TRUE./,AIRLND/54*.TRUE./,PG4243/.TRUE./,
      $ SPCIAL/.FALSE./,KTEMP/.FALSE./,TR80KM/.FALSE./,FILLZ/.FALSE./,
-     $ FILLT/.FALSE./,FILLW/.FALSE./,FILLM/.FALSE./,PRFLER/4*.TRUE./,
+     $ FILLT/.FALSE./,FILLW/.FALSE./,FILLM/.FALSE./,PRFLER/5*.TRUE./,
      $ GOESPW/2*.FALSE./,GOESCT/2*.FALSE./,STNPRT/3*'        '/,
      $ RECSLM/.TRUE./,VADWIN/.FALSE./,TOVRAD/.FALSE./,PFRALT/.FALSE./,
      $ TOVRTV/.FALSE./,AIFNOW/9*.TRUE./,FLDMGS/.TRUE./,
@@ -19843,7 +19856,7 @@ C$$$
      $ SWINDO_l/12*+300.,6*+700.,6*+300.,12*+300.,12*+300.,12*+300.,
      $ 6*+700.,6*+300.,12*+300.,12*+300.,12*+300.,6*+700.,6*+300.,
      $ 12*+300.,12*+300.,336*+300./,XWINDO/24*300./,JPSSMI/24*9999/,
-     $ IEWNDO/-3,3/,JPERSD/6*9999/,PWINDO/4*300./,JPQKSD/6*9999/,JPWDSD/
+     $ IEWNDO/-3,3/,JPERSD/6*9999/,PWINDO/5*300./,JPQKSD/6*9999/,JPWDSD/
      $ 6*9999/,IQWNDO/-3,3/,IWWNDO/-3,3/,CWINDO/300./,VWINDO/300./,
      $ DWINDO/300./,JPGPSD/6*9999/,GWINDO/300./,TWINDO/300./,JPASCD/
      $ 6*9999/,IAWNDO/-3,3/
