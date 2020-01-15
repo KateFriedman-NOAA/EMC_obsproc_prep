@@ -3232,9 +3232,9 @@ C        DECODER)
          M = 3
          IF(IPRINT.GT.1)  PRINT 199, UAIR(3,I),M
          IF(UAIR(3,I).LT.XMISS) THEN
-            IF(ITP.EQ.5) THEN
+            IF(ITP.EQ.5 .OR. ITP.EQ.13) THEN
                RDATX(IDATS_04+ILC+2) = NINT(UAIR(3,I)*10.)
-            ELSE IF(ITP.EQ.12 .OR. ITP.EQ.13) THEN
+            ELSE IF(ITP.EQ.12) THEN
                RDATX(IDATS_04+ILC+2) = UAIR(3,I)
             END IF
          END IF
@@ -3259,7 +3259,7 @@ C                 REPORT LAYOUT FOR VALUES)
 
 C       ... CONVERT FROM METERS/SEC TO KNOTS
 
-            IF (ITP .EQ. 5) THEN
+            IF (ITP .EQ. 5 .OR. ITP .EQ. 13) THEN
 CDAKCDAK       KRMS = INT(1.93333 * UAIR(5,I))
                KRMS = INT(1.9425 * UAIR(5,I))
                IF(KRMS.LT.13)  THEN
@@ -3267,7 +3267,7 @@ CDAKCDAK       KRMS = INT(1.93333 * UAIR(5,I))
                ELSE
                  RDATX(IDATS_04+ILC+4) = 7.0
                END IF
-            ELSE IF (ITP .EQ. 12 .OR. ITP .EQ. 13) THEN
+            ELSE IF (ITP .EQ. 12) THEN
                QFV = UAIR(5,I)
                IF(QFV .EQ. 0) THEN
                  RDATX(IDATS_04+ILC+4) = 1.0

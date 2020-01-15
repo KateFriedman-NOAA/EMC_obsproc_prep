@@ -50,7 +50,7 @@ CMD = prepobs_prepacpf
 # For now DO NOT comment out DEBUG2 option - want to run in ops with debugger on to make sure
 #  no problems
 DEBUG =                -g -traceback
-DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
+#DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
 FFLAGS = -O2 -convert big_endian -list -assume noold_ldout_format -fixed $(DEBUG) $(DEBUG2)
 
 
