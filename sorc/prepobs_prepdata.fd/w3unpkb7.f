@@ -2091,7 +2091,6 @@ C-----------------------------------------------------------------------
 
       RDATX(1:IDMAX) = RDATA(1:IDMAX)
       HDR_8 = BMISS
-CJDONG      CALL UFBINT(LUNIT,HDR_8,12,1,NLEV,HDRSTR);HDR=HDR_8
       IF(ITP.EQ.14.OR.ITP.EQ.13)  THEN
          CALL UFBINT(LUNIT,HDR_8,12,1,NLEV,HDRSTR2);HDR=HDR_8
       ELSE
