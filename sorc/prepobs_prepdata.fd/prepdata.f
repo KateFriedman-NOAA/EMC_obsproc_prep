@@ -3814,6 +3814,7 @@ C              PREPBUFR center dates are correctly tested.
 C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from
 C        from other countries (e.g. Europe, New Zealand) (NC002018) and
 C        Hong Kong wind profiler data (NC002014).
+C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
 C
 C USAGE:    CALL PREP
 C   INPUT FILES:
@@ -3849,7 +3850,7 @@ C  ARRAY
 C PARAMETER NAME "MXBLVL"  THROUGHOUT PGM SETS MAXIMUM NO. OF REPORT
 C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
       PARAMETER (MXBLVL = 255)
-      CHARACTER*8   STNPRT,STNID,FILNAM(7),DSNAME,SUBSET_d
+      CHARACTER*8   STNPRT,STNID,FILNAM(7),DSNAME,SUBSET_d,subset_t
       CHARACTER*25  DNAME(3)
       CHARACTER*47  NAME1
       CHARACTER*56  NAME2
@@ -3857,7 +3858,7 @@ C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
      $ SPCIAL,FILLW,FILLT,FILLM,TOVBFR,MARLND,GOESPW,GOESCT,VADWIN,
      $ GOESRD,FLRECO,DROPSN,SUBSKP,PROFILERinADPUPA,RASS
       INTEGER  IDATA(MAXOBS),MDATE(4)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/STRCTY/ICAT(MXLVL)
       COMMON/STRMOB/MOBS(MXTYPV,MXWRDL,MXLVL)
@@ -3938,6 +3939,7 @@ C***********************************************************************
       IDSDAT    = 0
       IDSDMP_8  = 0
       SUBSET_d  = 'XXXXXXXX'
+      subset_t  = 'XXXXXXXX'
 C KNTALL COUNTS NO. OF REPORTS UNPACKED FROM FILE (ALL REPORTS)
       KNTALL = 0
 C KOUNT COUNTS NO. OF REPORTS UNPACKED (& NOT SKIPPED) FROM FILE
@@ -4447,7 +4449,7 @@ C SPLIT CENTER DATE INTO COMPONENTS (MDATE)
             MDATE(4) = MOD(IDSDAT,100)
 c-----------------------------------------------------------------------
 c  Read 1st dummy message in file so can then call iupvs01 to get iminu
-            call readmg(nfile,subset,ibdate,kret)
+            call readmg(nfile,subset_t,ibdate,kret)
             iminu = iupvs01(nfile,'MINU')
 c  Close file and reopen so W3UNPKB7 will handle things as though this
 c   block of code never exited
@@ -5006,6 +5008,7 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
+C 2020-02-13 J. DONG -- Added to define IDSDAT
 C
 C USAGE:    CALL UNPREPBF(IFLAG,CYCLET,IOPENED,DSNAME,IDSDAT,IDSDMP_8,*)
 C   INPUT  ARGUMENT LIST:
@@ -5059,7 +5062,7 @@ C$$$
       CHARACTER*8   STNID,CRES1,CRES2,DSNAME,SUBSET_d
       CHARACTER*11  CBULL
       INTEGER  IDATA(MAXOBS),MDATE(4)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/ADP/ISATOB,PMAND(23),RDATA(MAXOBS),IPRINT
       COMMON/UNITNO/NFILE,IUNIT(28)
@@ -12596,6 +12599,7 @@ C     WORD 6 (SO IT CAN LATER BE ENCODED INTO PREPBUFR FILE)
 C 2014-11-25  D. A. Keyser -- Removed input argument "IDATE" (central
 C     date) from call to subr. W3CNVXTOVS since year {IDATE(1)} is no
 C     longer needed to obtain BUFR satellite ID.
+C 2020-02-13 J. Dong -- Added to define IDSDAT
 C
 C USAGE:    CALL SATEDS
 C   INPUT FILES:
@@ -12640,7 +12644,7 @@ CCC
       LOGICAL  SATMST,TR80KM,TOVEDS
       INTEGER  IBUF(140),JRTRV(3),NUMOB(5,4,2,4,4),KEPOB(5,4,2,4),
      $ MSTOB(5,4,2,4),IDATA(MAXOBS),KSATOB(3),IDSAT(4),ISAMPLE(2)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/ADP/ISATOB,PMAND(23),RDATA(MAXOBS),IPRINT
       COMMON/DATA/KOUNT,IDATE(4),IDAT10,MP_PROCESS,WRMISS,IDATMM
@@ -13428,6 +13432,7 @@ C     SUBR. UPON FIRST CALL FOR ATOVS DATA (SIGNALS INPUT BUFR FILE
 C     IS A DATA DUMP)
 C 2001-10-10  D. A. KEYSER -- STORES BUFR SATELLITE ID IN UNPACKED
 C     IW3UNPBF WORD 6 SO IT CAN LATER BE ENCODED INTO PREPBUFR FILE
+C 2020-02-13 J. Dong -- Added to define IDSDAT
 C
 C USAGE:    CALL SATBFR
 C   INPUT FILES:
@@ -13475,7 +13480,7 @@ CCC
      $ IPRT(2),IQ(MXLVL,NUMQMS),JQ(MXLVL,NUMQMS),IDATA(MAXOBS),
      $ IR(MXLVL,NUMQMS),JR(MXLVL,NUMQMS),KSATOB(11),IRTCHN(35),IDSAT(4),
      $ ISAMPLE(2)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL  PP(MXLVL),ZP(MXLVL),TP(MXLVL),QP(MXLVL),TMP(MXLVL,NUMDAT),
      $ CLAL(MXLVL),CLAM(MXLVL),RSATOB(17)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
@@ -14019,6 +14024,7 @@ C        PREPBUFR file.
 C        BENEFIT: Accounts for possibility of center (cycle) date in
 C                 PREPBUFR file not being zero with addition of new
 C                 RTMA_RU where minutes here can be 15, 30 or 45.
+C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
 C
 C USAGE:    CALL GOESDG
 C   INPUT FILES:
@@ -14069,12 +14075,12 @@ CCC
       PARAMETER (MAXOBS = 3500)
       PARAMETER (NUMOBS2 = 43)
       CHARACTER*1  CIDGST(4,4)
-      CHARACTER*8  STNID,STNPRT,DSNAME,SUBSET_d
+      CHARACTER*8  STNID,STNPRT,DSNAME,SUBSET_d,subset_t
       LOGICAL  SATMST,GOESND,GOESPW,GOESCT,GOESRD
       INTEGER  NUMOB(5,4,2,4,4),KEPOB(5,4,2,4),MSTOB(5,4,2,4),
      $ IDATA(MAXOBS),JRTRV(4),IQ(MXLVL,NUMQMS),IPRT(2),IRTYP(3),
      $ JCAT8(4),JNDEX(4),ITYPP(2,3),IR(MXLVL,NUMQMS),IDSAT(4)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL  PP(MXLVL),ZP(MXLVL),TP(MXLVL),DP(MXLVL)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/LNDSEA/GDSH(145,37),GDUS(362,91),GDNH(362,91)
@@ -14188,7 +14194,7 @@ C.......................................................................
 C IRET = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
 c-----------------------------------------------------------------------
 c  Read 1st dummy message in file so can then call iupvs01 to get iminu
-         call readmg(IUNIT(8),subset,ibdate,kret)
+         call readmg(IUNIT(8),subset_t,ibdate,kret)
          iminu = iupvs01(IUNIT(8),'MINU')
 c  Close file and reopen so W3UNPKB7 will handle things as though this
 c   block of code never exited
@@ -15227,6 +15233,7 @@ C     quality mark read from the ADPSFC dump file).
 C 2015-04-16  D. A. Keyser -- Call to subr. LNDCHK now uses new 16
 C     point check for determining if marine reports in the N.H. are
 C     over land or sea.
+C 2020-02-13 J. Dong -- Added to define IDSDAT
 C
 C USAGE:    CALL SFCDTA
 C   INPUT FILES:
@@ -15263,7 +15270,7 @@ C$$$
       LOGICAL  LFM,MARLND,MSLBOG,ATLAS,PFRALT,SFLAND,SUBSKP,PFRALT_save,
      $ npkrpt
       INTEGER  IDATA(MAXOBS),NC(5),ISQNUM(3),NOBS3_SAVE(7)
-      INTEGER(8)  IDSDMP_8
+      INTEGER(8)  IDSDAT,IDSDMP_8
       REAL OBS2_SAVE(4:NUMOBS2),OBS3_SAVE(5,MXBLVL,7)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/RUNSW/IRNMRK
@@ -16609,6 +16616,7 @@ C     "TIMWIN" (+/- TIME WINDOW) ("-" PRIOR TO CYCLE TIME, "+" AFTER
 C     CYCLE TIME), ALLOWS THE 2 TO BE DIFFERENT
 C 2001-06-19  D. A. KEYSER -- NEW SUBR. "TIMCHK" DOES TIME WINDOW CHECK
 C     SEPARATE FROM "RPTLBL"
+C 2020-02-13 J. Dong -- Added to define IDSDAT
 C
 C USAGE:    CALL GETSMI
 C   INPUT FILES:
@@ -16639,7 +16647,7 @@ C$$$
       CHARACTER*8  STNID,DSNAME,SUBSET_d
       CHARACTER*46 CTEXT(4)
       INTEGER  KOUNT_MI(6,4),IDATA(MAXOBS),ITYP(189:198)
-      INTEGER(8)  IDSDMP_8
+      INTEGER(8)  IDSDAT,IDSDMP_8
       REAL  PHISMI(7)
       real(8)  alon_8,alat_8
       COMMON/STRMOB/MOBS(MXTYPV,MXWRDL,MXLVL)
@@ -16962,6 +16970,7 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
+C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
 C
 C USAGE:    CALL GETSCATT(ISCTP)
 C   INPUT ARGUMENT LIST:
@@ -17002,9 +17011,9 @@ C$$$
       PARAMETER (MAXOBS = 3500)
       PARAMETER (NUMOBS2 = 43)
       CHARACTER*6  NAME(4)
-      CHARACTER*8  STNID,STNPRT,DSNAME,DNAME(4),SUBSET_d
+      CHARACTER*8  STNID,STNPRT,DSNAME,DNAME(4),SUBSET_d,subset_t
       INTEGER  KOUNW(6),IDATA(MAXOBS),IBWNDO(2,4),MDATE(4),IRPTY(4)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL  PHISCT(7)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/STRMOB/MOBS(MXTYPV,MXWRDL,MXLVL)
@@ -17034,6 +17043,8 @@ C$$$
       IBWNDO(2,3) = IWWNDO(2)
       IBWNDO(1,4) = IAWNDO(1)
       IBWNDO(2,4) = IAWNDO(2)
+      SUBSET_d  = 'XXXXXXXX'
+      subset_t  = 'XXXXXXXX'
 C KNTALL COUNTS NO. OF REPORTS UNPACKED FROM FILE (ALL REPORTS)
       KNTALL = 0
 C KOUNT COUNTS TOTAL NO. OF RPTS UNPACKED (& NOT SKIPPED) FROM FILE
@@ -17057,6 +17068,8 @@ C INITIALIZE REQV AS MISSING
       IRET = 0
 C CALL W3UNPKB7 TO READ/DECODE NEXT ERS, QUIKSCAT, WINDSAT OR ASCAT
 C  WIND REPORT
+      IDSDAT    = 0
+      IDSDMP_8  = 0
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
       OBS3   = BMISS  ! initialize obs3   array before reading any rpts
       NOBS3  = 0      ! initialize nobs3  array before reading any rpts
@@ -17077,7 +17090,7 @@ C SPLIT CENTER DATE INTO COMPONENTS (MDATE)
          MDATE(4) = MOD(IDSDAT,100)
 c-----------------------------------------------------------------------
 c  Read 1st dummy message in file so can then call iupvs01 to get iminu
-         call readmg(nfile,subset,ibdate,kret)
+         call readmg(nfile,subset_t,ibdate,kret)
          iminu = iupvs01(nfile,'MINU')
 c  Close file and reopen so W3UNPKB7 will handle things as though this
 c   block of code never exited
@@ -17343,6 +17356,7 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
+C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
 C
 C USAGE:    CALL GETGPSIPW
 C   INPUT FILES:
@@ -17365,11 +17379,11 @@ C$$$
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
       PARAMETER (NUMOBS2 = 43)
-      CHARACTER*8  STNID,DSNAME,SUBSET_d
+      CHARACTER*8  STNID,DSNAME,SUBSET_d,subset_t
       LOGICAL  SKGP45
       LOGICAL  SKGNSS
       INTEGER  IDATA(MAXOBS),KOUNG(6),MDATE(4)
-      INTEGER(8) IDSDMP_8
+      INTEGER(8) IDSDAT,IDSDMP_8
       REAL  PHIIPW(7)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/UNITNO/NFILE,IUNIT(28)
@@ -17434,7 +17448,7 @@ C SPLIT CENTER DATE INTO COMPONENTS (MDATE)
          MDATE(4) = MOD(IDSDAT,100)
 c-----------------------------------------------------------------------
 c  Read 1st dummy message in file so can then call iupvs01 to get iminu
-         call readmg(nfile,subset,ibdate,kret)
+         call readmg(nfile,subset_t,ibdate,kret)
          iminu = iupvs01(nfile,'MINU')
 c  Close file and reopen so W3UNPKB7 will handle things as though this
 c   block of code never exited

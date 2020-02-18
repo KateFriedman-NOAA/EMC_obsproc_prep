@@ -794,7 +794,7 @@ C  -----------------------------------------------------
       REAL(8)     BMISS,GETBMISS
 
       INTEGER     IDATE(4),LSDATE(4),IDATA(IDMAX),JDATE(8)
-      INTEGER(8)  IDSDMP_8,IDDATE_8(5)
+      INTEGER(8)  IDSDAT,IDSDMP_8,IDDATE_8(5)
 
       LOGICAL     SUBSKP(0:255,0:200),SKIP_CAT12
 
@@ -3261,7 +3261,8 @@ C       ... CONVERT FROM METERS/SEC TO KNOTS
             IF (ITP .EQ. 5 .OR. ITP .EQ. 13) THEN
 CDAKCDAK       KRMS = INT(1.93333 * UAIR(5,I))
                KRMS = INT(1.9425 * UAIR(5,I))
-               IF(KRMS.LT.13)  THEN
+CDONG:DEBUG
+               IF(KRMS.GE.0.AND.KRMS.LT.13)  THEN
                   RDATX(IDATS_04+ILC+4) = RMS(KRMS)
                ELSE
                  RDATX(IDATS_04+ILC+4) = 7.0
