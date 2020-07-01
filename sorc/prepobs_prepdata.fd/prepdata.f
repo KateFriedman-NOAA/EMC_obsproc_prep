@@ -2534,6 +2534,8 @@ C        OBS2(41) = SEA-SURFACE TEMPERATURE TABLE VALUE (Q.M.)
 C                   (BUFR C.T. 0-22-246)
 C        OBS2(42) = MOISTURE QUALITY (BUFR C.T. 0-33-026)
 C        OBS2(43) = SATELLITE ZENITH ANGLE (DEGREES)
+C        OBS2(44) = HEIGHT OF SENSOR ABOVE LOCAL GROUND (M)
+C        OBS2(45) = DURATION OF TIME FOR PAST WEATHER (HR)
 C
 C----------------------------------------------------------------------
 C  ADDITONAL SINGLE "LEVEL" REPORT (SINGLE MASS/WIND PIECE) INFORMATION
@@ -2590,8 +2592,8 @@ C         (NOTE: THIS APPLIES TO ALL REPORTS COMING FROM IW3UNPBF)
 C----------------------------------------------------------------------
 C
 C  C O N T E N T S   O F   T H E   A R R A Y S   O B S 3  &  N O B S 3
-C                              OBS3(5,MXBLVL,7)
-C                                NOBS3(7)
+C                              OBS3(5,MXBLVL,8)
+C                                NOBS3(8)
 C
 C
 C        OBS3(1,A,1) = DURATION OF TIME FOR TOTAL PRECIPITATION
@@ -2610,10 +2612,11 @@ C        OBS3(4,C,3) = HEIGHT OF BASE OF CLOUD (M)
 C        OBS3(5,C,3) = HEIGHT OF TOP OF CLOUD (M)
 C        {WHERE C RANGES FROM 1 TO NOBS3(3), THE NUMBER OF "LEVELS"}
 C
-C        OBS3(1,D,4) = DURATION OF TIME FOR MAXIMUM TEMPERATURE (HR)
-C        OBS3(2,D,4) = MAXIMUM TEMPERATURE (K)
-C        OBS3(3,D,4) = DURATION OF TIME FOR MINIMUM TEMPERATURE (HR)
-C        OBS3(4,D,4) = MINIMUM TEMPERATURE (K)
+C        OBS3(1,D,4) = HEIGHT OF SENSOR ABOVE LOCAL GROUND (M)
+C        OBS3(2,D,4) = DURATION OF TIME FOR MAXIMUM TEMPERATURE (HR)
+C        OBS3(3,D,4) = MAXIMUM TEMPERATURE (K)
+C        OBS3(4,D,4) = DURATION OF TIME FOR MINIMUM TEMPERATURE (HR)
+C        OBS3(5,D,4) = MINIMUM TEMPERATURE (K)
 C        {WHERE D RANGES FROM 1 TO NOBS3(4), THE NUMBER OF "LEVELS"}
 C
 C        OBS3(1,E,5) = DIRECTION OF SWELL WAVES (DEGREES)
@@ -2629,7 +2632,12 @@ C
 C        OBS3(1,G,7) = DEGREE OF TURBULENCE (BUFR C.T. 0-11-031)
 C        OBS3(2,G,7) = HEIGHT OF BASE OF TURBULENCE (M)
 C        OBS3(3,G,7) = HEIGHT OF TOP OF TURBULENCE (M)
-C        {WHERE G RANGES FROM 1 TO NOBS3(7), THE NUMBER OF "LEVELS"}
+C        {WHERE G RANGES FROM 1 TO NOBS3(8), THE NUMBER OF "LEVELS"}
+C
+C        OBS3(1,H,8) = TIME PERIOD OR DISPLACEMENT (MINUTE)
+C        OBS3(2,H,8) = MAXIMUM WIND GUST DIRECTION (DEGREES TRUE)
+C        OBS3(3,H,8) = MAXIMUM WIND GUST SPEED (METERS/SECOND)
+C        {WHERE H RANGES FROM 1 TO NOBS3(8), THE NUMBER OF "LEVELS"}
 C
 C----------------------------------------------------------------------
 C            REPORT (MASS/WIND PIECE) DATA ARE STORED IN ARRAYS
@@ -3846,7 +3854,7 @@ C$$$
       PARAMETER (MAXOBS = 3500)
 C PARAMETER NAME "NUMOBS2"  THROUGHOUT PGM SETS NO. OF ELEMENTS IN OBS2
 C  ARRAY
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
 C PARAMETER NAME "MXBLVL"  THROUGHOUT PGM SETS MAXIMUM NO. OF REPORT
 C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
       PARAMETER (MXBLVL = 255)
@@ -3905,7 +3913,7 @@ C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
       COMMON/PWSWCH/PWT(5),IQMPW
       COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/RASSSW/RASS,TWINDO
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE  (IDATA,RDATA)
@@ -3920,8 +3928,8 @@ C  LEVELS THAT CAN BE PROCESSED AND ENCODED INTO BUFR MESSAGES
 C INITIALIZE IPMSL ARRAY (WILL REMAIN MISSING UNTIL SURFACE REPORTS)
       IPMSL  = IMISS
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
 C***********************************************************************
@@ -4430,8 +4438,8 @@ C  HOURS SO W3UNPKB7 WILL NOT HAVE TO DO ANY TIME CHECKS - -3 TO +2
 C  HOURS WOULD ALSO AVOID TIME CHECKS BUT NEED EXPANDED WINDOW
 C  BECAUSE GFS DUMPS ATE +/-5 HOURS TO IMPROVE PROFCQC PERFORMANCE}
          OBS2   = BMISS  ! init obs2   array before reading any rpts
-         OBS3   = BMISS  ! init obs3   array before reading any rpts
-         NOBS3  = 0      ! init nobs3  array before reading any rpts
+         OBS3   = BMISS  ! init OBS3   array before reading any rpts
+         NOBS3  = 0      ! init NOBS3  array before reading any rpts
          obs8_8 = BMISS  ! init obs8_8 array before reading any rpts
          RDATA2 = BMISS  ! init rdata2 array before reading any rpts
          CALL W3UNPKB7(IDATE,-5,+5,NFILE,RDATA,STNID,DSNAME,RDATA2,
@@ -5058,7 +5066,7 @@ C$$$
       PARAMETER (MXWRDH = 15)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*8   STNID,CRES1,CRES2,DSNAME,SUBSET_d
       CHARACTER*11  CBULL
       INTEGER  IDATA(MAXOBS),MDATE(4)
@@ -5072,7 +5080,7 @@ C$$$
       COMMON/RPTHDR/SUBSET_d,STNID,HDR(2:MXWRDH),alon_8,alat_8
       COMMON/XTRHD2/CRES1,CRES2,CBULL
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE  (RDATA,IDATA)
@@ -5093,8 +5101,8 @@ C  CRES1, CRES2, CBULL, OBS2, OBS3, NOBS3 and obs8_8 HOLD RETURNED
 C  REPORT IN SPECIFIED UNPACKED FORMAT {UNLESS FIRST CALL WHICH SHOULD
 C  RETURN JUST THE DATA SET INFO (DSNAME, IDSDAT AND IDSDMP_8)}
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       IF(IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3,
@@ -5376,8 +5384,8 @@ C$$$
       SUBROUTINE RPTLBL(CYCLET)
       PARAMETER (MXWRDH = 15)
       PARAMETER (MAXOBS = 3500)
-      parameter (mxblvl = 255)
-      parameter (numobs2 = 43)
+      parameter (MXBLVL = 255)
+      parameter (numobs2 = 45)
       CHARACTER*8  STNID,SUBSET_d,CRES1,CRES2
       CHARACTER*11 CBULL
       LOGICAL  PROFILERinADPUPA
@@ -5390,7 +5398,7 @@ C$$$
       COMMON/LAUNCH/ALNCH
       COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
       COMMON/XTRHD2/CRES1,CRES2,CBULL
-      common/direct/obs3(5,mxblvl,7),obs2(numobs2),nobs3(7),rdata2(25),
+      common/direct/OBS3(5,MXBLVL,8),OBS2(numobs2),NOBS3(8),rdata2(25),
      $ obs8_8(2)
       common /bufrlib_missing/bmiss
       DATA  XMISS/99999./, YMISS/99998.8/,IMISS/99999/
@@ -9618,7 +9626,7 @@ C$$$
       PARAMETER (NUMDAT = NUMVAR + (2 * NUMQMS))
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*8  ADPTYP,STNID,STNPRT,SUBSET_d
       LOGICAL  KTEMP,PROFILERinADPUPA
       INTEGER  IQ(MXLVL,NUMQMS),IDATA(MAXOBS),IR(MXLVL,NUMQMS),IPRT(2)
@@ -9638,7 +9646,7 @@ C$$$
       COMMON/LFMSFC/LFMAXI,LFMAXJ,FMESHL,FLONVT,FPOLEI,FPOLEJ,MARLND,
      $ JSURFM(12),JSURFW(12),FWINDO(12),PFRALT,npkrpt(12)
       COMMON/PFSWCH/PRFLER(5),PWINDO(5),PROFILERinADPUPA
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE  (DAT,PP),(DAT(1,2),ZP),(DAT(1,3),TP),(DAT(1,4),DP),
@@ -10656,7 +10664,7 @@ C$$$
       PARAMETER (MXPWT =  5)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       LOGICAL  TOVRAD,GOESRD,TOVEDS
       real(8)  obs8_8,alon_8,alat_8
       CHARACTER*8  STNPRT,STNID,CRES1,CRES2,SUBSET_d
@@ -10692,7 +10700,7 @@ C$$$
      $ KSKPMI,KMSGMI,KBDYMI
       COMMON/COUNT/KKTYPE(100:299)
       COMMON/SFCBFR/ALTIMR,PRSS
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON/XTRHD2/CRES1,CRES2,CBULL
       EQUIVALENCE(IDATA,RDATA)
@@ -11354,7 +11362,7 @@ C$$$
       PARAMETER (MXLVL = 600)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*8  STNID,CRES1,CRES2,SUBSET_d
       CHARACTER*11 CBULL
       LOGICAL  AIRLND,SWNLND,RECSLM,AIFNOW,FLRECO,WRMISS
@@ -11385,7 +11393,7 @@ C$$$
       COMMON/LFMSFC/LFMAXI,LFMAXJ,FMESHL,FLONVT,FPOLEI,FPOLEJ,MARLND,
      $ JSURFM(12),JSURFW(12),FWINDO(12),PFRALT,npkrpt(12)
       COMMON/XTRHD2/CRES1,CRES2,CBULL
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE  (IDATA,RDATA)
@@ -12637,7 +12645,7 @@ CCC
       PARAMETER (MXWRDH = 15)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*4  SAMPLE(2)
       CHARACTER*5  CTYPE(2)
       CHARACTER*8   STNPRT,STNID,DSNAME,SUBSET_d
@@ -12657,7 +12665,7 @@ CCC
       COMMON/SATSW2/PHI(6),IRTRV(5,4,4),KTOP(5,4,4),IWINDO_e(5,4,4),
      $ IWINDO_l(5,4,4),SATMST(5,4,4),ISATLS(5,4,4)
       COMMON/PARM6/MODPRT,IFLUA,STNPRT(3)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE (RDATA,IDATA)
@@ -12707,8 +12715,8 @@ C KSKPTV WILL COUNT NO. OF DECODED REPORTS SKIPPED (VARIOUS REASONS)
  1400 CONTINUE
 C ATTEMPT TO DECODE THE NEXT RTOVS OR ATOVS REPORT
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       CALL W3XTOVSEDS(NFILE,IDATEM,IBUF,KSATOB,PBOT,DSNAME,IDSDAT,
@@ -13471,7 +13479,7 @@ CCC
       PARAMETER (NUMDAT = NUMVAR + (2 * NUMQMS))
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*4  SAMPLE(2)
       CHARACTER*5  CTYPE(2)
       CHARACTER*8  STNID,STNPRT,DSNAME,SUBSET_d
@@ -13497,7 +13505,7 @@ CCC
       COMMON/PARM6/MODPRT,IFLUA,STNPRT(3)
       COMMON/RADANC/RTRAD(35),GRAD(18),IGCHN(18),SOZANG,SAZANG,OZONE,
      $ SKINT,CLDAMT,TOVRAD,TOVRTV,GOESRD(2)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE (DAT,PP),(DAT(1,2),ZP),(DAT(1,3),TP),(DAT(1,4),QP),
@@ -13563,8 +13571,8 @@ C INITIALIZE ALL REASON CODES AS 100 (ORIGINAL DATA) PRIOR TO EACH CALL
       IR = 100
       JR = 100
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       IF(NN.EQ.1)  THEN
@@ -14073,7 +14081,7 @@ CCC
       PARAMETER (NUMDAT = NUMVAR + (2 * NUMQMS))
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*1  CIDGST(4,4)
       CHARACTER*8  STNID,STNPRT,DSNAME,SUBSET_d,subset_t
       LOGICAL  SATMST,GOESND,GOESPW,GOESCT,GOESRD
@@ -14101,7 +14109,7 @@ CCC
       COMMON/PWSWCH/PWT(5),IQMPW
       COMMON/SFCBFR/ALTIMR,PRSS
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE (DAT,PP),(DAT(1,2),ZP),(DAT(1,3),TP),(DAT(1,4),DP),
@@ -14182,8 +14190,8 @@ C INIT. CLOUD TOP DATA
 C ATTEMPT TO DECODE THE NEXT REPORT
       IRET = 0
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       CALL W3UNPKB7(IDATE,IETIME,ILTIME,IUNIT(8),RDATA,STNID,DSNAME,
@@ -15264,14 +15272,14 @@ C$$$
       PARAMETER (MXLVL = 600)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*8   STNID,FILNAM(5),DSNAME,SUBSET_d
       CHARACTER*41  NAME1
       LOGICAL  LFM,MARLND,MSLBOG,ATLAS,PFRALT,SFLAND,SUBSKP,PFRALT_save,
      $ npkrpt
-      INTEGER  IDATA(MAXOBS),NC(5),ISQNUM(3),NOBS3_SAVE(7)
+      INTEGER  IDATA(MAXOBS),NC(5),ISQNUM(3),NOBS3_SAVE(8)
       INTEGER(8)  IDSDAT,IDSDMP_8
-      REAL OBS2_SAVE(4:NUMOBS2),OBS3_SAVE(5,MXBLVL,7)
+      REAL OBS2_SAVE(4:NUMOBS2),OBS3_SAVE(5,MXBLVL,8)
       REAL(8)  BMISS,obs8_8,alon_8,alat_8
       COMMON/RUNSW/IRNMRK
       COMMON/STRMSL/IPMSL(MXTYPV)
@@ -15290,7 +15298,7 @@ C$$$
      $ KSKCLS,KSKTHN,KSKOMR(2),KSKALM(9),KSKAHM(9),KSKNOW(9),KSKDRP
       COMMON/SFCBFR/ALTIMR,PRSS
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       common/pstnflg/ipstnflg
       COMMON /BUFRLIB_MISSING/BMISS
@@ -16347,7 +16355,7 @@ cfix?    TEMP = YMISS + 0.5
       END IF
 C IF MOISTURE MISSING OR GROSSLY BAD, OR TEMPERATURE GROSSLY BAD, SKIP
 C  PROCESSING OF MOISTURE
-      IF(TEMP.LE.-1000..OR.DPDP.LT.0.0.OR.DPDP.GT.9999..OR.IMQ.GE.
+      IF(TEMP.LE.-1000..OR.DPDP.LT.0.0.OR.DPDP.GT.999..OR.IMQ.GE.
      $ IQMLIM)  GO TO 15
       DP = ((TEMP - DPDP) * 0.1) + 273.16
 C STORE DEWPOINT TEMP OBS (*100 DEG. C) IN WORD 6 OF MOBS MASS LEVEL 1
@@ -17009,7 +17017,7 @@ C$$$
       PARAMETER (MXLVL = 600)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*6  NAME(4)
       CHARACTER*8  STNID,STNPRT,DSNAME,DNAME(4),SUBSET_d,subset_t
       INTEGER  KOUNW(6),IDATA(MAXOBS),IBWNDO(2,4),MDATE(4),IRPTY(4)
@@ -17027,7 +17035,7 @@ C$$$
      $ JPWDSD(6),KSKPSC(4),KMSGSC(4),KBDYSC(4),KTIMSC(4),KNTSCT(4),
      $ JPASCD(6),IAWNDO(2)
       COMMON/SKPSUB/SUBSKP(0:255,0:200)
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON /BUFRLIB_MISSING/BMISS
       EQUIVALENCE  (RDATA,IDATA)
@@ -17071,8 +17079,8 @@ C  WIND REPORT
       IDSDAT    = 0
       IDSDMP_8  = 0
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       CALL W3UNPKB7(IDATE,IBWNDO(1,ISCTP),IBWNDO(2,ISCTP),NFILE,RDATA,
@@ -17378,7 +17386,7 @@ C$$$
       PARAMETER (MXWRDH = 15)
       PARAMETER (MXBLVL = 255)
       PARAMETER (MAXOBS = 3500)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       CHARACTER*8  STNID,DSNAME,SUBSET_d,subset_t
       LOGICAL  SKGP45
       LOGICAL  SKGNSS
@@ -17389,7 +17397,7 @@ C$$$
       COMMON/UNITNO/NFILE,IUNIT(28)
       COMMON/ADP/ISATOB,PMAND(23),RDATA(MAXOBS),IPRINT
       COMMON/DATA/KOUNT,IDATE(4),IDAT10,MP_PROCESS,WRMISS,IDATMM
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
       COMMON/RPTHDR/SUBSET_d,STNID,HDR(2:MXWRDH),alon_8,alat_8
       COMMON/PWSWCH/PWT(5),IQMPW
@@ -17429,8 +17437,8 @@ C INITIALIZE PRECIPITABLE WATER AS MISSING
       IRET = 0
 C CALL W3UNPKB7 TO READ/DECODE THE NEXT GPS-IPW/ZTD REPORT
       OBS2   = BMISS  ! initialize obs2   array before reading any rpts
-      OBS3   = BMISS  ! initialize obs3   array before reading any rpts
-      NOBS3  = 0      ! initialize nobs3  array before reading any rpts
+      OBS3   = BMISS  ! initialize OBS3   array before reading any rpts
+      NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
       CALL W3UNPKB7(IDATE,IETIME,ILTIME,NFILE,RDATA,STNID,DSNAME,RDATA2,
@@ -17904,7 +17912,7 @@ C
 C$$$
       SUBROUTINE W3FIZZ(IER)
       PARAMETER (MXWRDH = 15)
-      PARAMETER (NUMOBS2 = 43)
+      PARAMETER (NUMOBS2 = 45)
       PARAMETER (MAXOBS = 3500)
 
 C PARAMETER NAME "MHDRWD"  THROUGHOUT PGM SETS MAXIMUM NO. OF REPORT
@@ -17933,7 +17941,7 @@ C  TABLE-A MESSAGE TYPES
       COMMON/RPTHDR/SUBSET_d,STNID,HDR(2:MXWRDH),alon_8,alat_8
       COMMON/PREVSW/PREVEN
       COMMON/APDNSW/APPEND
-      COMMON/DIRECT/OBS3(5,MXBLVL,7),OBS2(NUMOBS2),NOBS3(7),RDATA2(25),
+      COMMON/DIRECT/OBS3(5,MXBLVL,8),OBS2(NUMOBS2),NOBS3(8),RDATA2(25),
      $ obs8_8(2)
 
       COMMON /BUFRLIB_MISSING/BMISS
@@ -17961,7 +17969,7 @@ C  TABLE-A MESSAGE TYPES
       REAL(8) HDR_8,OBS_8(MOBSWD,MXBLVL),OB2_8(MOB2WD,MXBLVL),
      $ QMS_8(MQMSWD,MXBLVL),PGM_8(MPGMWD,MXBLVL),RSN_8(MPGMWD,MXBLVL),
      $ BTO_8(2,MXBLVL),RAD_8(5),AERS_8(12),OBS2_8(NUMOBS2),
-     $ OBS3_8(5,MXBLVL,7),RPRV_8(2),RACID_8,RDATA2_8(25),obs8_8,
+     $ OBS3_8(5,MXBLVL,8),RPRV_8(2),RACID_8,RDATA2_8(25),obs8_8,
      $ alon_8,alat_8
 
       REAL(8) cldamt_8, cldbas_8
@@ -18462,7 +18470,7 @@ C  INFO IS NOT DIRECTLY USED BY ASSIMILATION, IT MIGHT BE USEFUL FOR
 C  VERIFICATION OR IN OTHER WAYS) {RIGHT NOW ONLY APPLIES TO AIRCRAFT
 C  DATA (MAINLY PIREPS) BASED ON LOGIC IN SUBR. GETC06}
             IF(MAX(NOBS3(1),NOBS3(2),NOBS3(3),NOBS3(4),NOBS3(5),
-     $       NOBS3(6),NOBS3(7)).EQ.0) THEN
+     $       NOBS3(6),NOBS3(7),NOBS3(8)).EQ.0) THEN
                DO I = 1,NUMOBS2
                   IF(OBS2(I).LT.YMISS) THEN
                      NMOBS2 = 1
@@ -18527,7 +18535,9 @@ C STORE VARIABLES THAT ARE IN SINGLE-LVL OBS2 & MULTI-LVL OBS3 ARRAYS
      $                                             NOBS3(2),IRET,'PRWE')
             IF(NOBS3(3).GT.0) CALL UFBINT(IUNITP,OBS3_8(1,1,3),5,
      $                         NOBS3(3),IRET,'VSSO CLAM CLTP HOCB HOCT')
-
+C JDONG-5/13/2020
+            IF(NOBS3(8).GT.0) CALL UFBINT(IUNITP,OBS3_8(1,1,8),5,
+     $                      NOBS3(8),IRET,'TPMI MXGD MXGSS')
 
 C Process CEILING data
 c-----------
@@ -18546,32 +18556,32 @@ c    fill CEILING w/ arbitrarily high value (currently 20000m).
 c-----------
 
 c  check for at least 1 cloud layer (nobs(3)>0) in METAR reports (TYP=512)
-      if(nobs3(3).gt.0 .and. int(hdr_8(7)).eq.512) then
+      if(NOBS3(3).gt.0 .and. int(hdr_8(7)).eq.512) then
 
 c-- debug of ceiling: available cloud amount & cloud base values
 c---  DATA HEADR1/'SID  XOB YOB DHR NUL TYP T29 TSB ITP ELV SQN SIRC '/
-c---  OBS3_8(5,MXBLVL,7)
+c---  OBS3_8(5,MXBLVL,8)
       db_ceiling=.false.  ! set to .true. to debug
       if ( db_ceiling ) then
         write(*,'(a,1x,a8,$)') 'db: ',stnid
         write(*,'(3(1x,f6.2),$)') (hdr_8(i),i=2,4)
         write(*,'(2(1x,i5),$)') (int(hdr_8(i)),i=6,7)
-        write(*,'(2x,a,i2)') "n= ",nobs3(3)
+        write(*,'(2x,a,i2)') "n= ",NOBS3(3)
 
-        do i=1,nobs3(3)
+        do i=1,NOBS3(3)
           write(*,'(a,4x,i2,1x,":",3(2x,i3),2(3x,i5))') 'db: ',i,
-     $      (idint(obs3_8(j,i,3)),j=1,3),
-     $      (idint(obs3_8(j,i,3)),j=4,5)
-        enddo ! i=1,nobs3(3)
+     $      (idint(OBS3_8(j,i,3)),j=1,3),
+     $      (idint(OBS3_8(j,i,3)),j=4,5)
+        enddo ! i=1,NOBS3(3)
        endif ! db_ceiling
 c--
 
 c - loop thru available cloud layers, low to high
         ndx_amt=0
         ndx_bas=0
-        do i=1,nobs3(3)
-          cldamt_8=obs3_8(2,i,3)
-          cldbas_8=obs3_8(4,i,3)
+        do i=1,NOBS3(3)
+          cldamt_8=OBS3_8(2,i,3)
+          cldbas_8=OBS3_8(4,i,3)
 
 c - if cld amount missing or indiscernable, skip this level/layer
           if ( ibfms(cldamt_8).eq.1 ) cycle                ! CLAM missing
@@ -18589,7 +18599,7 @@ c - check for sufficient cloud amount in this layer, break out of loop if found
             exit
           endif ! if broken or betw 6-10 tenths cover
 
-        enddo ! i=1,nobs3(3)
+        enddo ! i=1,NOBS3(3)
 
 c - specify infinite or missing ceiling values
         if ( ndx_amt.ne.0 ) then                  ! some clouds found
@@ -18605,14 +18615,16 @@ c - write out ceiling value
      &      write(*,'(a,1x,i5)') 'db: ceil= ', idint(cldbas_8)
           call UFBINT(iunitp,cldbas_8,1,1,iret,'CEILING')
 
-      endif ! nobs3(3)>0 & hdr_8(7)=512 (metar)
+      endif ! NOBS3(3)>0 & hdr_8(7)=512 (metar)
 c - end of CEILING processing
 
 
             IF(NOBS3(4).GT.0) CALL UFBINT(IUNITP,OBS3_8(1,1,4),5,
-     $                      NOBS3(4),IRET,'.DTHMXTM MXTM .DTHMITM MITM')
+     $                NOBS3(4),IRET,'HSALG .DTHMXTM MXTM .DTHMITM MITM')
             IF(NOBS3(5).GT.0) CALL UFBINT(IUNITP,OBS3_8(1,1,5),5,
      $                                   NOBS3(5),IRET,'DOSW HOSW POSW')
+            CALL UFBINT(IUNITP,OBS2_8(44),1,1,IRET,'SHALG')
+            CALL UFBINT(IUNITP,OBS2_8(45),1,1,IRET,'TPHR')
 
          ELSE IF(SUBSET(ITYP).EQ.'SFCSHP  ') THEN
             CALL UFBINT(IUNITP,OBS2_8( 4),12,1,IRET,
@@ -18664,7 +18676,7 @@ c - end of CEILING processing
             CALL UFBINT(IUNITP,RDATA2_8(3) ,1,1,IRET,'CTCN')
             CALL UFBINT(IUNITP,RDATA2_8(22),3,1,IRET,'WVCQ BSCD LKCS')
          ELSE IF(SUBSET(ITYP).EQ.'SATWND  ') THEN
-            CALL UFBINT(IUNITP,OBS2_8(NUMOBS2), 1,1,IRET,'SAZA')
+            CALL UFBINT(IUNITP,OBS2_8(43), 1,1,IRET,'SAZA')
          END IF
 
          IF(NLV.GT.0)  THEN
@@ -18684,6 +18696,14 @@ c - end of CEILING processing
             RSN_8=RSN
             CALL UFBINT(IUNITP,RSN_8,MPGMWD,NLV,IRET,RSNSTR(ITYP))
             IF(SUBSET(ITYP).EQ.'AIRCFT  '.AND.NLV.EQ.1)  THEN
+C JDONG-6/1/2020 
+               IF(NOBS3(1).GT.0)  THEN
+    ! Tell BUFRLIB there are NOBS3(1) TOPC_SEQ replications for this rpt
+                  CALL DRFINI(IUNITP,NOBS3(1),1,'{TOPC_SEQ}')
+    ! Store TOPC_SEQ replications for this rpt
+                  CALL UFBSEQ(IUNITP,OBS3_8(1,1,1),1,NOBS3(1),IRET,
+     $             'TOPC_SEQ')
+               END IF
                IF(NOBS3(2).GT.0)  THEN
     ! Tell BUFRLIB there are NOBS3(2) PREWXSEQ replications for this rpt
                   CALL DRFINI(IUNITP,NOBS3(2),1,'{PREWXSEQ}')
@@ -18712,6 +18732,14 @@ c - end of CEILING processing
                   CALL UFBSEQ(IUNITP,OBS3_8(1,1,7),3,NOBS3(7),IRET,
      $             'TURB3SEQ')
 	       END IF
+C JDONG-6/18/2020 
+               IF(NOBS3(8).GT.0)  THEN
+    ! Tell BUFRLIB there are NOBS3(8) BSYWND2 replications for this rpt
+                  CALL DRFINI(IUNITP,NOBS3(8),1,'{BSYWND2}')
+    ! Store BSYWND2 replications for this rpt
+                  CALL UFBSEQ(IUNITP,OBS3_8(1,1,8),3,NOBS3(8),IRET,
+     $             'BSYWND2')
+               END IF
 	    END IF
 cdak        IF(HDR(6).EQ.286)  THEN
 C.......................................................................

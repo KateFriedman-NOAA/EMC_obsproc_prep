@@ -69,7 +69,7 @@ c                        xiv_t,xiv_q,xiv_d,xiv_s,
 c                        l_minus9C,nevents,hdr,acid,rct,drinfo,
 c                        acft_seq,turb1seq,turb2seq,turb3seq,
 c                        prewxseq,cloudseq,afic_seq,mstq,cat,rolf,
-c                        nnestreps,sqn,procn,
+c                        bsywnd2,topc_seq,nnestreps,sqn,procn,
 c                        pob_ev,pqm_ev,ppc_ev,prc_ev,pbg,ppp,
 c                        zob_ev,zqm_ev,zpc_ev,zrc_ev,zbg,zpp,
 c                        tob_ev,tqm_ev,tpc_ev,trc_ev,tbg,tpp,
@@ -141,6 +141,8 @@ c     turb2seq     - Array of type 2 aircraft turbulence for the "merged" report
 c     turb3seq     - Array of type 3 aircraft turbulence for the "merged" reports
 c     prewxseq     - Array of present weather info for the "merged" reports
 c     cloudseq     - Array of cloud info for the "merged" reports
+c     bsywnd2      - Array of synoptic report wind data 2 (bufr)
+c     topc_seq     - Array of precipitation info for the "merged" reports
 c     afic_seq     - Array of aircraft icing info for the "merged" reports
 c     mstq         - Array of aircraft moisture flags for the "merged" reports
 c     cat          - Array of PREPBUFR level category values ("CAT") for the "merged" reports
@@ -223,7 +225,7 @@ c$$$
      +                      l_minus9C,nevents,hdr,acid,rct,drinfo,
      +                      acft_seq,turb1seq,turb2seq,turb3seq,
      +                      prewxseq,cloudseq,afic_seq,mstq,cat,rolf,
-     +                      nnestreps,sqn,procn,
+     +                      bsywnd2,topc_seq,nnestreps,sqn,procn,
      +                      pob_ev,pqm_ev,ppc_ev,prc_ev,pbg,ppp,
      +                      zob_ev,zqm_ev,zpc_ev,zrc_ev,zbg,zpp,
      +                      tob_ev,tqm_ev,tpc_ev,trc_ev,tbg,tpp,
@@ -542,6 +544,8 @@ c ------------------------------------------------------------------------------
      +,       turb3seq(3,max_reps,5)   ! DGOT HBOT HTOT
      +,       prewxseq(1,max_reps,5)   ! PRWE
      +,       cloudseq(5,max_reps,5)   ! VSSO CLAM CLTP HOCB HOCT
+     +,       bsywnd2(3,max_reps,5)    ! TPMI MXGD MXGSS 
+     +,       topc_seq(2,max_reps,5)   ! .DTHTOPC TOPC
      +,       afic_seq(3,max_reps,5)   ! AFIC HBOI HTOI 
      +,       mstq(max_reps)           ! MSTQ
      +,       cat(max_reps)            ! CAT
@@ -651,6 +655,8 @@ c -----------------------------
       turb3seq = bmiss
       prewxseq = bmiss
       cloudseq = bmiss
+      bsywnd2  = bmiss
+      topc_seq = bmiss
       afic_seq = bmiss
       mstq     = bmiss
       cat      = bmiss

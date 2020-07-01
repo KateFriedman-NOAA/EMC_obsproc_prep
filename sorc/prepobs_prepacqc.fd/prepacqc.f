@@ -716,6 +716,8 @@ c ------------------------------------------------------------------------------
      +,       prewxseq(1,max_reps,5)  ! PRWE
      +,       cloudseq(5,max_reps,5)  ! VSSO CLAM CLTP HOCB HOCT
      +,       afic_seq(3,max_reps,5)  ! AFIC HBOI HTOI
+     +,       bsywnd2(3,max_reps,5)   ! TPMI MXGD MXGSS
+     +,       topc_seq(2,max_reps,5)  ! .DTHTOPC TOPC
      +,       mstq(max_reps)          ! MSTQ
      +,       cat(max_reps)           ! CAT
      +,       rolf(max_reps)          ! ROLF
@@ -810,6 +812,8 @@ calloc  real*8,allocatable :: turb2seq(:,:)
 calloc  real*8,allocatable :: turb3seq(:,:,:)
 calloc  real*8,allocatable :: prewxseq(:,:,:)
 calloc  real*8,allocatable :: cloudseq(:,:,:)
+calloc  real*8,allocatable :: bsywnd2(:,:,:)
+calloc  real*8,allocatable :: topc_seq(:,:,:)
 calloc  real*8,allocatable :: afic_seq(:,:,:)
 calloc  real*8,allocatable :: mstq(:)
 calloc  real*8,allocatable :: cat(:)
@@ -1132,6 +1136,8 @@ calloc  allocate(turb2seq(max_reps,4),stat=i);if(i.ne.0) go to 901
 calloc  allocate(turb3seq(3,max_reps,5),stat=i);if(i.ne.0) go to 901
 calloc  allocate(prewxseq(1,max_reps,5),stat=i);if(i.ne.0) go to 901
 calloc  allocate(cloudseq(5,max_reps,5),stat=i);if(i.ne.0) go to 901
+calloc  allocate(bsywnd2(3,max_reps,5),stat=i);if(i.ne.0) go to 901
+calloc  allocate(topc_seq(2,max_reps,5),stat=i);if(i.ne.0) go to 901
 calloc  allocate(afic_seq(3,max_reps,5),stat=i);if(i.ne.0) go to 901
 calloc  allocate(mstq(max_reps),stat=i);if(i.ne.0) go to 901
 calloc  allocate(cat(max_reps),stat=i);if(i.ne.0) go to 901
@@ -1156,7 +1162,7 @@ c ------------------------------------------------------------------------------
      +                xiv_t,xiv_q,xiv_d,xiv_s,l_minus9C,nevents,
      +                hdr,acid,rct,drinfo,acft_seq,turb1seq,turb2seq,
      +                turb3seq,prewxseq,cloudseq,afic_seq,mstq,cat,rolf,
-     +                nnestreps,sqn,procn,
+     +                bsywnd2,topc_seq,nnestreps,sqn,procn,
      +                pob_ev,pqm_ev,ppc_ev,prc_ev,pbg,ppp,
      +                zob_ev,zqm_ev,zpc_ev,zrc_ev,zbg,zpp,
      +                tob_ev,tqm_ev,tpc_ev,trc_ev,tbg,tpp,
