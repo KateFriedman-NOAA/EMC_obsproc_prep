@@ -484,6 +484,9 @@ C 2018-10-22  D. A. KEYSER -- (changes are in function R06UBF)
 C     Changes to handle new GOES-16 & up satellite winds which do not
 C     contain a report id (STNID) and have high-res lat/lon (amongst
 C     other differences vs. GOES-15 & down).
+C 2020-01-06  J. Dong -- In function I02UBF, changed the windowing
+C     decade from 20 to 40 for cases when the year is represented by
+C     2 digits instead of 4.
 C 2020-02-20  J. DONG -- IN FUNCTION R04UBF, ADDED ABILITY TO READ
 C     ELEVATION (HSMSL) BUFR REPORTS OUT OF ADPSFC DUMP FILE IN 
 C     HEADER.  
@@ -516,6 +519,7 @@ C     PAST WEATHER BUFR REPORTS OUT OF ADPSFC DUMP FILE. ADDED TO
 C     READ THE TIME PERIOD OR DISPLACEMENT (TPHR) FOR THE PAST
 C     WEATHER MEASUREMENTS. OUTPUT ARRAY OBS2 INCR. FROM 44 TO 45 WORDS
 C     WORD 44 CONTAINS THE TIME PERIOD OR DISPLACEMENT (HOUR).
+C
 C
 C USAGE:    II = IW3UNPBF(NUNIT, OBS, STNID, CRES1, CRES2, CBULL, OBS2,
 C                         OBS3, NOBS3, OBS8_8, DSNAME, IDSDAT, IDSDMP_8,
@@ -1414,7 +1418,7 @@ C  THE JWFILE INDICATOR: =0 IF UNOPENED; =2 IF OPENED AND NCEP BUFR
 C  ----------------------------------------------------------------
  
       IF(JWFILE(LUNIT).EQ.0) THEN
-         PRINT'(" ===> IW3UNPBF - WCOSS VERSION: 10-22-2018")'
+         PRINT'(" ===> IW3UNPBF - WCOSS VERSION: 01-06-2020")'
 
 C  DETERMINE MACHINE WORD LENGTH (BYTES) FOR BOTH INTEGERS AND REALS
 C  -----------------------------------------------------------------

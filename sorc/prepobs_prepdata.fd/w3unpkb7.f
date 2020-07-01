@@ -232,6 +232,9 @@ C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
 C 2019-11-28 J. DONG -- Added prep processing to process newly available 
 C     VAD wind (NC002018) and profiler wind (NC002014) tanks
+C 2020-01-06  J. Dong -- In subroutine W3UNPKB7, changed the windowing
+C     decade from 20 to 40 for cases when the year is represented by
+C     2 digits instead of 4.
 C
 C
 C
@@ -847,7 +850,7 @@ C  THIS SUBR. WAS CALLED, PRINT NEW HEADER, SET JRET = 1
          LUNITL = LUNIT
          JRET = 1
          PRINT 101, LUNIT
-  101    FORMAT(//' ---> W3UNPKB7: WCOSS VERSION 11/30/2016: NCEP ',
+  101    FORMAT(//' ---> W3UNPKB7: WCOSS VERSION 01/06/2020: NCEP ',
      $    'BUFR DATA SET READ FROM UNIT ',I4/)
 
          BMISS = GETBMISS()
