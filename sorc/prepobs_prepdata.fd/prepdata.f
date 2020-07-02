@@ -3823,6 +3823,9 @@ C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from
 C        from other countries (e.g. Europe, New Zealand) (NC002018) and
 C        Hong Kong wind profiler data (NC002014).
 C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
+C 2020-05-18 J. Dong -- Differentiates between these and existing Radar Coded
+C     Message (RCM) VAD wind reports via use of report subtype (TSB=1
+C     for RCM, =2 for Level 2 and =3 for other vadwnd).
 C
 C USAGE:    CALL PREP
 C   INPUT FILES:
@@ -4707,11 +4710,14 @@ C-----------------------------------------------------------------------
 C STORE WORD 8 OF REPORT HEADER (REPORT "SUBTYPE") AS 2 FOR DROPS
 C  (STORED AS 1 FOR RECCOS IN SUBR. GETC06)
       IF(IDATA(9).EQ.31)  HDR(8) = 2.
-C STORE WORD 8 OF REPORT HEADER (REPORT "SUBTYPE") AS 2 FOR VAD WIND
+C  STORE WORD 8 OF REPORT HEADER (REPORT "SUBTYPE") AS 3 FOR OTHER
+C  VAD WIND REPORTS FROM EUROPE AND NEW ZEALAND, AS 2 FOR VAD WIND
 C  REPORTS FROM LEVEL 2 DECODER AND AS 1 FOR VAD WIND REPORTS FROM
 C  RADAR CODED MESSAGE
       IF(IDATA(9).EQ.72) THEN
-         IF(SUBSET_d.EQ.'NC002017')  THEN
+         IF(SUBSET_d.EQ.'NC002018')  THEN
+            HDR(8) = 3.
+         ELSE IF(SUBSET_d.EQ.'NC002017')  THEN
             HDR(8) = 2.
          ELSE
             HDR(8) = 1.

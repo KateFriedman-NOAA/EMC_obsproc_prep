@@ -2962,7 +2962,7 @@ C  ---------------------------------------------------------------------
             AMINIMUM_8 = MIN(OBS3_8(1,1,7),OBS3_8(2,1,7),OBS3_8(3,1,7))
             IF(IBFMS(AMINIMUM_8).NE.0)  IRET = 0
          END IF
-         NOBS3(8) = IRET
+         NOBS3(7) = IRET
          CALL UFBINT(LUNIT,OBS2_8(27),2,1,IRET,'WDIR1 WSPD1')
       ELSE                                              ! RAOBs, PIBALs
 c HBLCS is replicated for NC002* but is always missng on all but 1st lvl
@@ -4389,7 +4389,7 @@ C  ---------------------------------------------------------------------
          AMINIMUM_8 = MIN(OBS3_8(1,1,7),OBS3_8(2,1,7),OBS3_8(3,1,7))
          IF(IBFMS(AMINIMUM_8).NE.0) IRET = 0
       END IF
-      NOBS3(8) = IRET
+      NOBS3(7) = IRET
       IF(SUBSET.EQ.'NC004002')  THEN                           ! PIREPs
          CALL UFBINT(LUNIT,OBS3_8(1,1,2),5,255,IRET,'PRWE')
          IF(IRET.EQ.1) THEN ! reset iret from 1 to 0 if all obs missing

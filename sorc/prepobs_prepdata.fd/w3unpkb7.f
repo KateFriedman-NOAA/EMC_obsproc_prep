@@ -3117,7 +3117,7 @@ C  -----------------------------------------------------
       INTEGER  IDATA(IDMAX)
       INTEGER QFV
       LOGICAL  SKIP_CAT12
-      REAL(8) UAIR_8(5,255),BMISS
+      REAL(8) UAIR_8(5,255),BMISS,UFBINT2_8(10,255)
       REAL  RMS(0:12),UAIR(5,255),RDATA(*),RDATX(IDMAX)
       COMMON /PKB7AA/BMISS
       COMMON /PKB7BB/kdate(8),ldate(8),KTIMCH,IPRINT,SKIP_CAT12
@@ -3268,7 +3268,7 @@ C                 REPORT LAYOUT FOR VALUES)
 
 C       ... CONVERT FROM METERS/SEC TO KNOTS
 
-            IF (ITP .EQ. 5) THEN
+            IF (ITP.EQ.5) THEN
 CDAKCDAK       KRMS = INT(1.93333 * UAIR(5,I))
                KRMS = INT(1.9425 * UAIR(5,I))
 CDONG:DEBUG
