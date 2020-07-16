@@ -779,6 +779,9 @@ C     for all rpts. DO-LOOP logic more concise (esp. in temporal &
 C     vert. chks.)
 C 2016-12-20  D. Stokes   Increase the max allowable number of times 
 C     per station.
+C 2020-05-08 J. DONG  INITIALIZE VPMX, AND CONTROL THE VARIABLE NZZM2
+C     NOT LESS THAN 1 SO THAT THE ARGUMENT FOR AN ARRAY IS NOT LESS THAN
+C     1. 
 C
 C USAGE:   SUBROUTINE CHECKS(IS)
 C   INPUT ARGUMENT LIST:

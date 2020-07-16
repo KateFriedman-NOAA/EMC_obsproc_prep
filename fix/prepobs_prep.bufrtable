@@ -254,7 +254,7 @@
 | IALR     | 010082 | INSTANTANEOUS ALTITUDE RATE                              |
 | ELV      | 010199 | STATION ELEVATION                                        |
 | HSALG    | 007032 | HEIGHT OF SENSOR ABOVE LOCAL GROUND                      |
-| SHALG    | 007034 | SENSOR HEIGHT ABOVE LOCAL GROUND                         |
+| HSALGV   | 007034 | HEIGHT OF SENSOR ABOVE LOCAL GROUND FOR VISIBILITY       |
 |          |        |                                                          |
 | SPRR     | 021120 | SEAWINDS PROBABILITY OF RAIN (QUIKSCAT REPORTS ONLY)     |
 |          |        |                                                          |
@@ -351,7 +351,6 @@
 | HBOT     | 011032 | HEIGHT OF BASE OF TURBULENCE                             |
 | HTOT     | 011033 | HEIGHT OF TOP OF TURBULENCE                              |
 | MXGS     | 011041 | MAXIMUM WIND SPEED (GUSTS)                               |
-| MXGSS    | 011048 | MAXIMUM WIND SPEED (GUSTS)                               |
 | MXGD     | 011043 | MAXIMUM WIND GUST DIRECTION                              |
 | MWD10    | 011081 | MODEL WIND DIRECTION AT 10 M                             |
 | MWS10    | 011082 | MODEL WIND SPEED AT 10 M                                 |
@@ -599,7 +598,7 @@
 | ADPSFC   | HEADR    CAT       <P___INFO>  <Q___INFO>  <T___INFO>  <Z___INFO> |
 | ADPSFC   |        <W___INFO>  [W2_EVENT]  <PMSL_SEQ>  <ALTIMSEQ>  <SST_INFO> |
 | ADPSFC   |        {TOPC_SEQ}  {PREWXSEQ}  {CLOUDSEQ}  {TMXMNSEQ}  {SWELLSEQ} |
-| ADPSFC   |        <VISB1SEQ>  <PSTWXSEQ>  <PKWNDSEQ>  <GUST1SEQ>  <TPRECSEQ> |
+| ADPSFC   |        <VISB1SEQ>  <PSTWXSEQ>  <PKWNDSEQ>  <TPRECSEQ>             |
 | ADPSFC   |        <SUNSHSEQ>  <CLOU2SEQ>  <SNOW_SEQ>  <WAVE_SEQ>  <PTENDSEQ> |
 | ADPSFC   |        <CLOU3SEQ>  {BSYWND2}                                      |
 |          |                                                                   |
@@ -679,12 +678,12 @@
 | TOPC_SEQ | .DTHTOPC   TOPC                                                   |
 | PREWXSEQ | PRWE                                                              |
 | CLOUDSEQ | VSSO       CLAM    CLTP     HOCB    <HOCT_SEQ>                    |
-| BSYWND2  | TPMI       MXGD    MXGSS                                          |
+| BSYWND2  | TPMI       MXGD    MXGS                                           |
 | HOCT_SEQ | HOCT                                                              |
 | TMXMNSEQ | HSALG  .DTHMXTM    MXTM    .DTHMITM MITM                          |
 | SWELLSEQ | DOSW       HOSW    POSW                                           |
 | DBSS_SEQ | DBSS                                                              |
-| VISB1SEQ | SHALG  .REHOVI    HOVI   <VTVI_SEQ>                               |
+| VISB1SEQ | HSALGV .REHOVI    HOVI   <VTVI_SEQ>                               |
 | VISB2SEQ | HOVI              <VTVI_SEQ>                                      |
 | VTVI_SEQ | VTVI                                                              |
 | PSTWXSEQ | TPHR       PSW1       PSW2                                        |
@@ -808,7 +807,7 @@
 | IALR     |    3 |      -65536 |  17 | M/S                      |-------------|
 | ELV      |    0 |       -1000 |  17 | METER                    |-------------|
 | HSALG    |    2 |           0 |  16 | M                        |-------------|
-| SHALG    |    2 |           0 |  16 | M                        |-------------|
+| HSALGV   |    2 |           0 |  16 | M                        |-------------|
 |          |      |             |     |                          |-------------|
 | SPRR     |    3 |           0 |  10 | NUMERIC                  |-------------|
 |          |      |             |     |                          |-------------|
@@ -902,7 +901,6 @@
 | HBOT     |   -1 |         -40 |  16 | METERS                   |-------------|
 | HTOT     |   -1 |         -40 |  16 | METERS                   |-------------|
 | MXGS     |    1 |           0 |  12 | M/S                      |-------------|
-| MXGSS    |    1 |           0 |  12 | M/S                      |-------------|
 | MXGD     |    0 |           0 |   9 | DEGREES TRUE             |-------------|
 | TPHR     |    0 |       -2048 |  12 | HOUR                     |-------------|
 | TPMI     |    0 |       -2048 |  12 | MINUTE                   |-------------|

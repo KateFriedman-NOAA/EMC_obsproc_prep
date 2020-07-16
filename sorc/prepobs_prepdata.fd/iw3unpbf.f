@@ -519,6 +519,9 @@ C     PAST WEATHER BUFR REPORTS OUT OF ADPSFC DUMP FILE. ADDED TO
 C     READ THE TIME PERIOD OR DISPLACEMENT (TPHR) FOR THE PAST
 C     WEATHER MEASUREMENTS. OUTPUT ARRAY OBS2 INCR. FROM 44 TO 45 WORDS
 C     WORD 44 CONTAINS THE TIME PERIOD OR DISPLACEMENT (HOUR).
+C 2020-07-15  J. DONG -- MADE CHANGES TO READ '.DTMMXGS MXGS' IN TAC
+C     FORMAT BY USING BSYWND2 SEQUENCE (TPMI, MXGD AND MXGS) IN OBS3
+C     ARRAY.
 C
 C
 C USAGE:    II = IW3UNPBF(NUNIT, OBS, STNID, CRES1, CRES2, CBULL, OBS2,
@@ -3705,7 +3708,16 @@ C  ---------------------------------------------------------------------
             END IF
             NOBS3(8) = IRET
          ELSE
-            CALL UFBINT(LUNIT,OBS2_8(14),2,1,IRET,'.DTMMXGS MXGS')
+            CALL UFBINT(LUNIT,OBS3_8(1,1,8),2,1,IRET,'.DTMMXGS MXGS')
+            OBS3_8(3,1,8) = OBS3_8(2,1,8)
+            OBS3_8(2,1,8) = BMISS
+            IF(IRET.EQ.1) THEN ! reset iret from 1 to 0 if all obs missing
+                            !  (iret can be 1 even if all obs missing)
+               AMINIMUM_8 = MIN(OBS3_8(1,1,8),OBS3_8(2,1,8),
+     $           OBS3_8(3,1,8))
+               IF(IBFMS(AMINIMUM_8).NE.0)  IRET = 0
+            END IF
+            NOBS3(8) = IRET
          ENDIF
          CALL UFBINT(LUNIT,OBS2_8(17),3,1,IRET,'TP01 TP03 TP06')
          CALL UFBINT(LUNIT,OBS2_8(21),1,1,IRET,'TP24')
