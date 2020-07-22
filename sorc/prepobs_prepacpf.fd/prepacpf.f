@@ -1002,7 +1002,7 @@ c PRSLEVLA =>
 c   RCT ROLF MSTQ IALR CAT 
 c       <P___INFO> <Q___INFO> <T___INFO> <Z___INFO> <W___INFO>
 c       <DRFTINFO> <ACFT_SEQ> <TURB1SEQ> <TURB2SEQ> {TURB3SEQ}  ! ver2
-c       {PREWXSEQ} {CLOUDSEQ} {BSYWND2} {AFIC_SEQ}  NRLQMS {TOPC_SEQ}     ! ver2
+c       {PREWXSEQ} {CLOUDSEQ} {AFIC_SEQ}  NRLQMS {TOPC_SEQ}     ! ver2
 
       nnem=5        ! # of mnemonics
       cnem='RCT ROLF MSTQ IALR CAT'
@@ -1138,17 +1138,6 @@ c {CLOUDSEQ} =>
 c  == VSSO CLAM CLTP  HOCB HOCT
       nnem=5
       cnem='VSSO CLAM CLTP HOCB HOCT'
-      call ufbint(lunpro,pro2_8,MXNM, 255,nlev,cnem)
-      out2_8=bmiss
-      out2_8(1:nnem,2:nlev+1)=pro2_8(1:nnem,1:nlev)
-c     no changes to surface level in this sequence
-      nlev=nlev+1
-      call ufbint(lunout,out2_8,MXNM,nlev,iret,cnem)
-c ...jaw -- this needs updating for full replication output
-
-c {BSYWND2} == TPMI MXGD MXGS
-      nnem=3
-      cnem='TPMI MXGD MXGS'
       call ufbint(lunpro,pro2_8,MXNM, 255,nlev,cnem)
       out2_8=bmiss
       out2_8(1:nnem,2:nlev+1)=pro2_8(1:nnem,1:nlev)

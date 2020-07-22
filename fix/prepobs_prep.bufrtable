@@ -178,8 +178,6 @@
 | PW3F_MSQ | 348249 | MODEL 0.7 TO 0.3 SIGMA LAYER PRECIP WATER FORECAST SEQ.  |
 | PW4F_MSQ | 348250 | MODEL 0.3 TO 0.0 SIGMA LAYER PRECIP WATER FORECAST SEQ.  |
 *                                                                              |
-| BSYWND2  | 361067 | SYNOPTIC REPORT WIND DATA 2 (BUFR)                       |
-*                                                                              |
 *                                                                              |
 *     THE FOLLOWING ARE TABLE D ENTRIES FOR EVENTS CODES FOR THE VARIOUS       |
 *    PREPBUFR PROCESSING "STEPS" (PROGRAMS OR SUBROUTINES WITHIN PROGRAMS)     |
@@ -253,8 +251,6 @@
 |          |        |                                                          |
 | IALR     | 010082 | INSTANTANEOUS ALTITUDE RATE                              |
 | ELV      | 010199 | STATION ELEVATION                                        |
-| HSALG    | 007032 | HEIGHT OF SENSOR ABOVE LOCAL GROUND                      |
-| HSALGV   | 007034 | HEIGHT OF SENSOR ABOVE LOCAL GROUND FOR VISIBILITY       |
 |          |        |                                                          |
 | SPRR     | 021120 | SEAWINDS PROBABILITY OF RAIN (QUIKSCAT REPORTS ONLY)     |
 |          |        |                                                          |
@@ -285,8 +281,6 @@
 | HBOI     | 020194 | HEIGHT OF BASE OF ICING                                  |
 | HTOI     | 020195 | HEIGHT OF TOP OF ICING                                   |
 |          |        |                                                          |
-| TPHR     | 004024 | TIME PERIOD OR DISPLACEMENT                              |
-| TPMI     | 004025 | TIME PERIOD OR DISPLACEMENT                              |
 | .DTH.... | 004031 | DURATION OF TIME IN HOURS RELATED TO FOLLOWING VALUE     |
 | .DTM.... | 004032 | DURATION OF TIME IN MINS RELATED TO FOLLOWING VALUE      |
 | RCT      | 004217 | RECEIPT TIME                                             |
@@ -598,9 +592,9 @@
 | ADPSFC   | HEADR    CAT       <P___INFO>  <Q___INFO>  <T___INFO>  <Z___INFO> |
 | ADPSFC   |        <W___INFO>  [W2_EVENT]  <PMSL_SEQ>  <ALTIMSEQ>  <SST_INFO> |
 | ADPSFC   |        {TOPC_SEQ}  {PREWXSEQ}  {CLOUDSEQ}  {TMXMNSEQ}  {SWELLSEQ} |
-| ADPSFC   |        <VISB1SEQ>  <PSTWXSEQ>  <PKWNDSEQ>  <TPRECSEQ>             |
+| ADPSFC   |        <VISB1SEQ>  <PSTWXSEQ>  <PKWNDSEQ>  <GUST1SEQ>  <TPRECSEQ> |
 | ADPSFC   |        <SUNSHSEQ>  <CLOU2SEQ>  <SNOW_SEQ>  <WAVE_SEQ>  <PTENDSEQ> |
-| ADPSFC   |        <CLOU3SEQ>  {BSYWND2}                                      |
+| ADPSFC   |        <CLOU3SEQ>                                                 |
 |          |                                                                   |
 | SFCSHP   | HEADR   CAT        <P___INFO>  <Q___INFO>  <T___INFO>  <Z___INFO> |
 | SFCSHP   |        <W___INFO>  [W2_EVENT]  <PMSL_SEQ>  <SST_INFO>  <PREWXSEQ> |
@@ -678,15 +672,14 @@
 | TOPC_SEQ | .DTHTOPC   TOPC                                                   |
 | PREWXSEQ | PRWE                                                              |
 | CLOUDSEQ | VSSO       CLAM    CLTP     HOCB    <HOCT_SEQ>                    |
-| BSYWND2  | TPMI       MXGD    MXGS                                           |
 | HOCT_SEQ | HOCT                                                              |
-| TMXMNSEQ | HSALG  .DTHMXTM    MXTM    .DTHMITM MITM                          |
+| TMXMNSEQ | .DTHMXTM   MXTM    .DTHMITM MITM                                  |
 | SWELLSEQ | DOSW       HOSW    POSW                                           |
 | DBSS_SEQ | DBSS                                                              |
-| VISB1SEQ | HSALGV .REHOVI    HOVI   <VTVI_SEQ>                               |
+| VISB1SEQ | .REHOVI    HOVI   <VTVI_SEQ>                                      |
 | VISB2SEQ | HOVI              <VTVI_SEQ>                                      |
 | VTVI_SEQ | VTVI                                                              |
-| PSTWXSEQ | TPHR       PSW1       PSW2                                        |
+| PSTWXSEQ | PSW1       PSW2                                                   |
 | PKWNDSEQ | PKWDSP     PKWDDR                                                 |
 | GUST1SEQ | .DTMMXGS   MXGS                                                   |
 | GUST2SEQ | MXGS       MXGD                                                   |
@@ -806,8 +799,6 @@
 |          |      |             |     |                          |-------------|
 | IALR     |    3 |      -65536 |  17 | M/S                      |-------------|
 | ELV      |    0 |       -1000 |  17 | METER                    |-------------|
-| HSALG    |    2 |           0 |  16 | M                        |-------------|
-| HSALGV   |    2 |           0 |  16 | M                        |-------------|
 |          |      |             |     |                          |-------------|
 | SPRR     |    3 |           0 |  10 | NUMERIC                  |-------------|
 |          |      |             |     |                          |-------------|
@@ -902,8 +893,6 @@
 | HTOT     |   -1 |         -40 |  16 | METERS                   |-------------|
 | MXGS     |    1 |           0 |  12 | M/S                      |-------------|
 | MXGD     |    0 |           0 |   9 | DEGREES TRUE             |-------------|
-| TPHR     |    0 |       -2048 |  12 | HOUR                     |-------------|
-| TPMI     |    0 |       -2048 |  12 | MINUTE                   |-------------|
 | MWD10    |    2 |           0 |  16 | DEGREES TRUE             |-------------|
 | MWS10    |    2 |           0 |  14 | M/S                      |-------------|
 | WDIR1    |    0 |           0 |   9 | DEGREES TRUE             |-------------|
