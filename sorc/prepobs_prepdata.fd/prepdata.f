@@ -3094,7 +3094,7 @@ C  IN INTERFACE WITH SUBROUTINE IW3UNPBF
      $ FLACMS,IACFTH,SUBSKP,JPGPSD,GWINDO,RASS,TWINDO,JPWDSD,IWWNDO,
      $ FLDMFR,WRMISS,SKGP45,JPASCD,IAWNDO,npkrpt,SKGNSS
       NAMELIST/PARM/IUNIT
-      CALL W3TAGB('PREPOBS_PREPDATA',2017,0293,0500,'NP22')
+      CALL W3TAGB('PREPOBS_PREPDATA',2019,0339,0050,'EMC')
 C DETERMINE MACHINE WORD LENGTH (BYTES) FOR BOTH INTEGERS AND REALS
       CALL WORDLENGTH(LWI,LWR)
       PRINT 2213, LWI,LWR
@@ -3137,7 +3137,7 @@ C    CARDS FILE, JUST AFTER NAMELIST TASK, BY THE MAKE_PREPBUFR SCRIPT)
          PRINT 321, NET(1)
       END IF
   321 FORMAT(/37X,'WELCOME TO THE UNIVERSAL ',A14,' DATA PREPROCESSOR'/
-     $ 48X,'WCOSS VERSION CREATED 20 Oct 2017')
+     $ 48X,'WCOSS VERSION CREATED  9 Dec 2019 db ll')
       call bvers(cvstr)
       print 3211, cvstr
  3211 FORMAT(48X,'--BUFRLIB VERSION USED = v',a,/)
@@ -3995,7 +3995,8 @@ C CHECK TO SEE IF AIRCFT DATA SHOULD BE PROCESSED
      $      SUBSKP(004,013).AND.SUBSKP(004,103))
      $    GO TO 7001
       ELSE IF(NN.EQ.4)  THEN
-         SUBSKP(005,001:090) = .TRUE.
+!orig    SUBSKP(005,001:090) = .TRUE.             
+         SUBSKP(005,001:091) = .TRUE.              ! jaw db
 C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
          LOOP1: DO II=1,6
             LOOP1n1: DO JJ=1,2
@@ -4679,7 +4680,10 @@ C-----------------------------------------------------------------------
 C CALL SUBR. 'RPTLBL' TO STORE REPORT HEADER INTO HDR(4),HDR(5),HDR(7),
 C                          HDR(9)-HDR(15), ALAT_8, ALON_8
 C-----------------------------------------------------------------------
+      irpt=nint(hdr(7))                                         ! jaw db
       CALL RPTLBL(CYCLET)
+      print*,'db: prep - aftr RPTLBL',irpt,nint(hdr(7))              ! jaw db
+                                                                ! jaw db
 C STORE WORD 8 OF REPORT HEADER (REPORT "SUBTYPE") AS 2 FOR DROPS
 C  (STORED AS 1 FOR RECCOS IN SUBR. GETC06)
       IF(IDATA(9).EQ.31)  HDR(8) = 2.
@@ -5080,8 +5084,21 @@ C  RETURN JUST THE DATA SET INFO (DSNAME, IDSDAT AND IDSDMP_8)}
       NOBS3  = 0      ! initialize nobs3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
-      IF(IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3,
-     $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER).EQ.0) GO TO 50
+!jaw  IF(IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3,
+!jaw $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER).EQ.0) GO TO 50
+      ii=IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3, !  jaw db
+     $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER)              !  jaw db
+
+!!    if (dsname.eq."SFCSHP") then                                     ! jaw db
+!     if (trim(stnid).eq."5401667".or.trim(stnid).eq."5501594") then   ! jaw db
+!       print'(a,$)','db: unprepbf: iw3unpbf'                          ! jaw db
+!!      print'(a,$)',' dsname="'//trim(dsname)//'"'                    ! jaw db
+!       print'(a,$)','  stnid="'//trim( stnid)//'"'                    ! jaw db
+!       print'(a,2(1x,f10.5),$)',' ll=',obs8_8(1),obs8_8(2)            ! jaw db
+!       print*,' idat9=',idata(9)                                      ! jaw db
+!     endif ! dsname = sfcshp                                          ! jaw db
+      if (ii.EQ.0) GO TO 50                                            ! jaw db
+
    78 CONTINUE
 C-----------------------------------------------------------------------
       IF(IER.EQ.1)  THEN
@@ -5412,6 +5429,9 @@ C  hdr(3) {obtained from rdata(1)} into alat_8
       end if
 C DUMP REPORT TYPE GOES IN HDR(7)
       HDR(7)  = IDATA(9)
+
+!      if (int(NINT(HDR(7))/10).eq.56) print*,'db: rptlbl h7',hdr(7) ! jaw db
+
 C REPORT SEQUENCE NUMBER GOES IN HDR(11) (ONLY CURRENTLY FOR MDCRS
 C  AIRCRAFT REPORTS HERE)
 C INSTRUMENT TYPE GOES IN HDR(9)
@@ -10752,6 +10772,10 @@ C CORRECT HGHT LBL TO THICK. TO 1000 MB FOR RTOVS OR ATOVS SAT. SNDINGS
   905 FORMAT(/'>> (',I6,') ID ',A8,' @',F11.5,' N LAT/',F10.5,' E LON:',
      $ '# LVLS=',I4,'  D-TIM=',F9.5,' HR  ANL RT=',I3,'/',I4,'  DUMP ',
      $ 'RT=',I3,'  IT=',I3.3,' ELV=',I5)
+
+       if (int(NINT(HDR(7))/10).eq.56)                              ! jaw db
+     $  print*,'db: fillx h7-10 -',(hdr(j+6),j=1,4)                 ! jaw db
+
       ELSE
          PRINT 915, KOUNT,STNID,alat_8,alon_8,MLEV,HDR(4),NINT(HDR(6)),
      $    NINT(HDR(7)),NINT(HDR(9)),NINT(HDR(10)),NINT(RDATA2(2))
@@ -15367,6 +15391,10 @@ C  i.e., npkrpt=T for the particular type)
       ipstnflg = 0
 C CALL UNPREPBF TO UNPACK THE NEXT REPORT
       CALL UNPREPBF(IFLAG,CYCLET,IOPENED,DSNAME,IDSDAT,IDSDMP_8,*7000)
+
+!     if (trim(dsname).eq.'SFCSHP')                                    ! jaw db
+!    $  print*,"db: sfcdta aftr unprepbf()",iflag,iopened,trim(dsname) ! jaw db
+
       IF(IFLAG.EQ.1)  THEN
 C.......................................................................
 C IFLAG = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
@@ -15440,7 +15468,11 @@ C  ... CHECK FOR RECCOS WITH PMSL OBS - VALID SPLASH-LVL REPORTS
             END IF
          END IF
       END IF
+
       IF(ITYP.EQ.-99999)  ITYP = ISSEL(IDATA(9))
+
+      if (idata(9).eq.563.or.idata(9).eq.564)                     ! jaw db
+     $  print*,'db: sfcdta ityp,idata(9)',ityp,idata(9)           ! jaw db
 
 C THE TYPE OF REPORT JUST UNPACKED IS INDICATED BY 'ITYP'
 C   ITYP =  1 ===> SURFACE SYNOPTIC LAND STATION (FIXED)
@@ -15460,6 +15492,8 @@ C   ITYP = 13-19 > RESERVED FOR FUTURE TYPES
 C   ITYP = 20 ===> RECCO/DROPWINSONDE WITH NO SPLASH-LEVEL MASS
 C                  INFORMATION (INVALID TYPE)
 C   ITYP = 30 ===> "OTHER" (INVALID TYPE)
+
+!     if(ityp.eq.4) print*,'db: sfcdta ityp=',ityp              ! jaw db
 
       IFLSF = 0
       IFLTH = 0
@@ -15512,7 +15546,9 @@ C-----------------------------------------------------------------------
 C CALL SUBR. 'RPTLBL' TO STORE REPORT HEADER INTO HDR(4),HDR(5),HDR(7),
 C                          HDR(9)-HDR(15), ALAT_8, ALON_8
 C-----------------------------------------------------------------------
+      irpt=nint(hdr(7))                                         ! jaw db
       CALL RPTLBL(CYCLET)
+!     print*,'db: sfcdta - aftr RPTLBL',irpt,nint(hdr(7))       ! jaw db
 C-----------------------------------------------------------------------
 C        CALL SUBR. 'TIMCHK' TO CHECK IF REPORT IS W/I PROPER
 C              TIME WINDOW OF CYCLE TIME (IER =1 TOSS RPT)
@@ -15520,11 +15556,18 @@ C-----------------------------------------------------------------------
       TIMWIN_e = -FWINDO(ITYP) * .01
       TIMWIN_l =  FWINDO(ITYP) * .01
       CALL TIMCHK(HDR(4),TIMWIN_e,TIMWIN_l,IER)
+
+!     print*,'db: sfcdta - aftr TIMCHK',hdr(4),ier              ! jaw db
+
       IF(IER.EQ.1)  THEN
          KTIMSF = KTIMSF + 1
          GO TO 2090
       END IF
 C TEST FOR OVERLAND MARINE REPORTS
+
+      if (idata(9).eq.563.or.idata(9).eq.564)                    ! jaw db
+     $ print*,'db: sfcdta - MARLND= ',MARLND                     ! jaw db
+
       IF(MARLND)  GO TO 1490
 C-----------------------------------------------------------------------
 C TEST FOR ALL SURFACE MARINE TYPES EXCEPT C-MAN, AUTOMATED TIDE
@@ -15614,6 +15657,9 @@ C ALL SURFACE TYPES EXCEPT SPLASH-LVL RPTS ARE EXPECTED TO BE IN CAT. 51
          GO TO 2090
       END IF
       ELEV = NINT(RDATA(7))
+
+!     print*,'db: sfcdta mslbog nn ityp',mslbog,nn,ityp   ! jaw db
+
       IF(MSLBOG)  THEN
 C***********************************************************************
 C                MEAN SEA-LEVEL PRESSURE BOGUS REPORT
@@ -15712,6 +15758,9 @@ C  BUT ALL OTHER MARINE REPORTS GET ELEVATION SET TO 0 IN THIS CASE
             PRINT 959, STNID,RDATA(1),RDATA(2),IDATA(9)
   959 FORMAT(' > > MARINE ELEV. MISSING -ID=',A8,', LAT=',F7.2,'N, ',
      $ 'LON=',F8.2,'E, RTYP',I4,' - ELEVATION SET TO 0.0 M')
+
+      print*,'db: sfcdta elev',elev,ityp,rdata(7),idata(30)         ! jaw db
+
             ELEV = 0.0
             HDR(10) = ELEV
          END IF
@@ -16452,6 +16501,7 @@ C    gauge data (read from SFCSHP dump, dump report type 534).
 C 2014-04-25  D. A. Keyser -- Invalid "other" (default) output "type"
 C    changed from 13 TO 30.  Invalid RECCO/DROPWINSONDE with no splash-
 C    level mass output type changed from 12 to 20.
+c 2019-12-05 JWhiting - added 563-4 (BUFR feed fixed/drift buoys)
 C
 C USAGE:    XX = ISSEL(ITYPDMP)
 C   INPUT ARGUMENT LIST:
@@ -16486,7 +16536,8 @@ C$$$
       FUNCTION ISSEL(ITYPDMP)
       PARAMETER (MXWRDH = 15)
       PARAMETER (MAXOBS = 3500)
-      INTEGER  JTYPE(31:562),IDATA(MAXOBS)
+!     INTEGER  JTYPE(31:562),IDATA(MAXOBS)                 ! jaw db
+      INTEGER  JTYPE(31:564),IDATA(MAXOBS)
       real(8)  alon_8,alat_8
       CHARACTER*8  STNID,SUBSET_d
       COMMON/ADP/ISATOB,PMAND(23),RDATA(MAXOBS),IPRINT
@@ -16502,13 +16553,18 @@ C      --         --- ---     ---       --- ---       --- ---
 
 C          534        540        551         561 562  --> RTYPE
 C          ---        ---        ---         --- ---
-     $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4 /
+!    $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4 /             ! jaw db
+
+C          534        540        551         561 562 563 564  --> RTYPE
+C          ---        ---        ---         --- --- --- ---
+     $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4,  4,  4 /     ! jaw db
 
       DATA  YMISS/99998.8/
 
       ISSEL0 = 30
 
-      IF(ITYPDMP.GT.30.AND.ITYPDMP.LT.563)  ISSEL0 = JTYPE(ITYPDMP)
+!     IF(ITYPDMP.GT.30.AND.ITYPDMP.LT.563)  ISSEL0 = JTYPE(ITYPDMP) ! jaw db
+      IF(ITYPDMP.GT.30.AND.ITYPDMP.LT.565)  ISSEL0 = JTYPE(ITYPDMP)
 
       IF(ISSEL0.EQ.3)  THEN
 C AUSTRALIAN PAOBS RESET ISSEL0=7 (OPC/NOS POINT BOGUS RETAIN ISSEL0=3)

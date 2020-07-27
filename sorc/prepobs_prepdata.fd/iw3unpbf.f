@@ -484,6 +484,18 @@ C 2018-10-22  D. A. KEYSER -- (changes are in function R06UBF)
 C     Changes to handle new GOES-16 & up satellite winds which do not
 C     contain a report id (STNID) and have high-res lat/lon (amongst
 C     other differences vs. GOES-15 & down).
+C 2019-10-30 C. Hill --
+C   - Existing observation types 531, 561, and 562 are assigned to the
+C     BUFR form of data from C-MAN stations, moored buoys, and drifting
+C     buoys, respectively.
+C   - If the SST1 field is left unfilled during the processing of a BUFR
+C     marine data (NC00210#) message, then an alternate source field for
+C     sea-surface temperature (SST0) is read.
+C   - High-resolution position data are read from BUFR marine data messages
+C     using existing logic originally (2004-02-02) added for MesoNet data.
+c 2019-11-18 JWhiting 
+c     assigned input report type values of 563-4 to fixed and drifting
+c     BUFR-feed buoy data, respectively.
 C 2020-01-06  J. Dong -- In function I02UBF, changed the windowing 
 C     decade from 20 to 40 for cases when the year is represented by 
 C     2 digits instead of 4.
@@ -536,7 +548,7 @@ C                RESERVE WORD 1, CHARACTER RESERVE WORD 2 AND CBULL)
 C     STNID    - CHARACTER*8 SINGLE REPORT STATION IDENTIFICATION (UP
 C                TO 8 CHARACTERS, LEFT-JUSTIFIED)
 C                (Note: For GOES-16 & up satellite winds, there is no
-C                       report id; this is hardwirted as 8 dashes:
+C                       report id; this is hardwired as 8 dashes:
 C                       "--------".
 C     CRES1    - CHARACTER*8 SINGLE REPORT CHARACTER RESERVE WORD 1
 C                (SEE DOCUMENTATION/COMMENTS IN THIS PROGRAM (VARIES BY
@@ -779,8 +791,10 @@ C          532 - Tide gauge
 C          534 - Coast Guard Tide gauge
 C          540 - Mesonet surface
 C          551 - Sea-level pressure bogus
-C          561 - Buoys arriving in WMO FM13 format (fixed)
-C          562 - Buoys arriving in WMO FM18 format (fixed or drifting)
+C          561 - Buoy data arriving in WMO FM13 format (fixed);
+C          562 - Buoy data arriving in WMO FM18 format (fixed or drifting);
+C          563 - Buoy data arriving in WMO FM94 format (fixed);
+C          564 - Buoy data arriving in WMO FM94 format (fixed? or drifting);
 C          571 - SSM/I wind speed (ocean)
 C          573 - SSM/I soil moisture
 C          574 - SSM/I snow depth
@@ -1437,6 +1451,9 @@ C   this type/subtype with reports present for the diagnostic print
             GO TO 60
          END IF
          IERR = I02UBF(LUNIT,OBS,OBS2,OBS3,NOBS3,obs8_8,SUBSKP,IER)
+
+      if(dsname.eq.'SFCSHP') print*,'db: i02ubf(ier),obs6=',ier,obs(6) !  jaw db
+
          IF(IERR.EQ.1) THEN
             PRINT'(" IW3UNPBF - OPENED AN NCEP BUFR FILE IN UNIT ",I0)',
      $       LUNIT
@@ -1767,7 +1784,17 @@ C This next call, I believe, is needed only because SUBSET is not
 C  returned in DUMPBF ...
          call readmg(lunit,subset,idateb,iret)
 
+!jaw     if (subset(6:8).eq.'102'.or.subset(6:8).eq.'103') then       ! jaw db
+!jaw       print*,'I02UBF: found *buoyb, subset="'//trim(subset)//'"' ! jaw db
+!jaw     endif ! subset(6:8) == 102-3                                 ! jaw db
+
          DSNAMX = C01UBF(SUBSET)//'  '
+
+!jaw     if (subset(6:8).eq.'102'.or.subset(6:8).eq.'103') then       ! jaw db
+!jaw       print*,'I02UBF: dsnamx="'//trim(dsnamx)//'"'               ! jaw db
+!jaw !!!   stop                                                       ! jaw db
+!jaw !!!   if (idb.gt.10) stop                                        ! jaw db
+!jaw     endif ! subset(6:8) == 102-3                                 ! jaw db
 
          I02UBF = 1
          GO TO 10
@@ -2653,13 +2680,29 @@ C  BUOYS ARRIVING IN WMO FM18 FORMAT (FIXED OR DRIFTING)
 C  -----------------------------------------------------
 
                ERTUBF = 562
+!     print*,'db: r02ubf/ertubf "',trim(subset),'"',ertubf   ! jaw db
             ELSE  IF(SUBSET(6:8).EQ.'003') THEN
 
 C  BUOYS ARRIVING IN WMO FM13 FORMAT (FIXED)
 C  -----------------------------------------
 
                ERTUBF = 561
-            ELSE  IF(SUBSET(6:8).EQ.'004') THEN
+!     print*,'db: r02ubf/ertubf "',trim(subset),'"',ertubf   ! jaw db
+            ELSE  IF(SUBSET(6:8).EQ.'102') THEN
+    
+C  BUOYS ARRIVING IN WMO FM94/BUFR FORMAT (FIXED OR DRIFTING)
+C  ----------------------------------------------------------
+               ERTUBF = 564
+      print*,'db: r02ubf/ertubf "',trim(subset),'"',ertubf   ! jaw db
+            ELSE  IF(SUBSET(6:8).EQ.'103') THEN
+    
+C  BUOYS ARRIVING IN WMO FM94/BUFR FORMAT (FIXED)
+C  ----------------------------------------------
+    
+               ERTUBF = 563
+      print*,'db: r02ubf/ertubf "',trim(subset),'"',ertubf   ! jaw db
+            ELSE  IF(SUBSET(6:8).EQ.'004' 
+     +          .OR. SUBSET(6:8).EQ.'104') THEN
 
 C  C-MAN PLATFORM
 C  --------------
@@ -3695,13 +3738,18 @@ C  ---------------------------------------------------------------------
             NOBS3(5) = IRET
          END IF
       ELSE IF(SUBSET(1:5).EQ.'NC001')  THEN        ! All surface marine
-         IF(IBFMS(OBS2_8(4)).NE.0) THEN
+         IF(IBFMS(OBS2_8(4)).NE.0) THEN                  ! SST1 missing
+!jaw        IF(SUBSET(6:7).EQ.'10') THEN
+!jaw        CALL UFBINT(LUNIT,OBS2_8(4),1,1,IRET,'SST0')
+C         Retrieve field SST0 from buoy reports originating in BUFR form 
+!jaw        ELSE
 C DBUOYs store sub-sfc temp, use 1st lvl if SST1 msg (unless > 10m down)
             CALL UFBINT(LUNIT,OBS2_8(4),2,1,IRET,'STMP DBSS')
             IF(OBS2_8(5).GT.10.)  THEN
                OBS2_8(4:5) = BMISS
             END IF
-         END IF
+!jaw        END IF ! subset(6:7) = 10  ! BUFR-feed types
+         END IF ! obs2_8(4) ne 0 (SST1 missing)
          IF(IBFMS(OBS2_8(4)).EQ.0)  OBS2_8(41) = 2.0
          CALL UFBINT(LUNIT,OBS2_8( 6),1,1,IRET,'MSST')
          CALL UFBINT(LUNIT,OBS2_8( 8),8,1,IRET,
@@ -3755,6 +3803,8 @@ C  -----------------------------------------------
       CALL UFBINT(LUNIT,HDR_8,20,  1,IRET,HDSTR);HDR(2:)=HDR_8(2:)
 
 C  IN EARLY 2004, MESONETS WILL CONVERT TO HIGH-RESOLUTION LAT/LON
+C
+C  EXPLOITING HIGH-RESOLUTION LAT/LON DATA FROM MARINE STATIONS AS OF 10/2019
 C  ---------------------------------------------------------------
 
       IF(HDR_8(2).GE.BMISS)  THEN
