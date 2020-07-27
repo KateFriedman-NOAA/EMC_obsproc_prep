@@ -2,7 +2,7 @@
 #  this will only work well if all codes in package need same version of each lib below
 
 w3nco_ver=2.0.6
-bufr_ver=11.1.0; bufr_ver_Dellp3=11.3.0
+bufr_ver=11.3.0
 bacio_ver=2.0.2
 w3emc_ver=2.3.0
 nemsio_ver=2.2.2; nemsio_ver_CrayXC40=2.2.2; nemsio_ver_Dellp3=2.2.3
@@ -24,17 +24,9 @@ if [[ "$sys_tp" =~ Cray-XC40 && $nemsio_ver != "$nemsio_ver_CrayXC40" ]]; then
    nemsio_ver=$nemsio_ver_CrayXC40
 fi
 
-if [[ "$sys_tp" =~ IBM-p[12] ]]; then
-   module load w3nco/v$w3nco_ver
-   module load bufr/v$bufr_ver
-   module load bacio/v$bacio_ver
-   module load w3emc/v$w3emc_ver
-   module load nemsio/v$nemsio_ver
-   module load sigio/v$sigio_ver
-   module load sp/v$sp_ver
-elif [[ "$sys_tp" =~ Dell-p3 ]]; then
+if [[ "$sys_tp" =~ Dell-p3 ]]; then
    module load w3nco/$w3nco_ver
-   module load bufr/$bufr_ver_Dellp3
+   module load bufr/$bufr_ver
    module load w3emc/$w3emc_ver
    module load bacio/$bacio_ver
    module load ips/18.0.5.274
