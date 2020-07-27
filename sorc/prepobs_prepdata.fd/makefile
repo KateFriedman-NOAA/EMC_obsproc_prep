@@ -49,7 +49,7 @@ LIBS = ${W3EMC_LIB4} ${NEMSIO_LIB}  ${SIGIO_LIB4} ${BUFR_LIB4} ${W3NCO_LIB4} ${S
 CMD = prepobs_prepdata
 
 DEBUG =                -g -traceback
-#DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
+#DEBUG2 =         -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
 FFLAGS = -O2 -convert big_endian -list -assume noold_ldout_format -auto $(DEBUG) $(DEBUG2)
 
 

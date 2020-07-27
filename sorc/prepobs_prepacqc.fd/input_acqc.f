@@ -58,6 +58,10 @@ c                              For now, location in code where this seems possib
 c                              the spanning comments:
 c                      ! vvvv DAK-future change perhaps to account for incr. lat/lon precision
 c                      ! ^^^^ DAK-future change perhaps to account for incr. lat/lon precision
+C 2020-06-01  J. DONG  --  added the ability to encode the newly defined TOPC_SEQ sequence holding 
+C                   .DTHTOPC and TOPC with multiple replications for the ADPSFC.
+C 2020-06-18  J. DONG  --  added the ability to encode the newly defined BSYWND2 sequence holding 
+C                   TPMI, MXGD and MXGS for the ADPSFC.
 c
 c Usage: call input_acqc(inlun,max_reps,mxnmev,bmiss,imiss,amiss,
 c                        m2ft,mxlv,nrpts4QC,cdtg_an,alat,alon,ht_ft,

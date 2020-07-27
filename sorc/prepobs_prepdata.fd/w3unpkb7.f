@@ -230,6 +230,8 @@ C              0.00001 degree precision, and now that PREPBUFR encodes
 C              YOB (lat) and XOB (lon) at 0.00001 degree precision, this
 C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
+C 2019-11-28 J. DONG -- Added prep processing to process newly available 
+C     VAD wind (NC002018) and profiler wind (NC002014) tanks
 C 2020-01-06  J. Dong -- In subroutine W3UNPKB7, changed the windowing
 C     decade from 20 to 40 for cases when the year is represented by
 C     2 digits instead of 4.
@@ -795,7 +797,7 @@ C  -----------------------------------------------------
       REAL(8)     BMISS,GETBMISS
 
       INTEGER     IDATE(4),LSDATE(4),IDATA(IDMAX),JDATE(8)
-      INTEGER(8)  IDSDMP_8,IDDATE_8(5)
+      INTEGER(8)  IDSDAT,IDSDMP_8,IDDATE_8(5)
 
       LOGICAL     SUBSKP(0:255,0:200),SKIP_CAT12
 
@@ -812,7 +814,6 @@ C  -----------------------------------------------------
 
       DATA ITM/0/,LUNITL/-99/
 
-      IPRINT = 0
       IF(IRET.LT.0)  IPRINT = IABS(IRET)
       IRET = 0
       IF(ITM.EQ.0)  THEN
@@ -1029,9 +1030,11 @@ C  after dsname is retrieved then close and reopen data set ..
  
          call readmg(lunit,subset,ibdate,kret)
          if(subset.eq.'NC002007' .or. subset.eq.'NC002009' .or. 
-     $      subset.eq.'NC002011' .or. subset.eq.'NC002013')  then
+     $      subset.eq.'NC002011' .or. subset.eq.'NC002013' .or.
+     $      subset.eq.'NC002014' )  then
             dsname = 'PROFLR  '
-         else  if(subset.eq.'NC002008' .or. subset.EQ.'NC002017')  then
+         else  if(subset.eq.'NC002008' .or. subset.EQ.'NC002017' .or.
+     $            subset.EQ.'NC002018' )  then
             dsname = 'VADWND  '
          else  if(subset.EQ.'NC003001' .or. subset.EQ.'NC003002')  then
             dsname = 'GOESND  '
@@ -1061,7 +1064,7 @@ c.......................................................................
          INDEX = 0
          JDATE(1:3) = IDATE(1:3)
          JDATE(4) = 0
-         JDATE(5) = IDATE(4)
+         JDATE(5) = IDATE(4) 
          JDATE(6:8) = 0
          PRINT 6681, IDATE
  6681 FORMAT(/' %%% REQUESTED "CENTRAL" DATE IS :',I5,3I3,'  0'/)
@@ -1160,7 +1163,7 @@ C STORE THE HEADER INFORMATION INTO UNPACKED QUASI-IW3UNPBF FORMAT
       CALL UNPKB703(LUNIT,RDATA,rdata8_8,STNID,SUBSET,ITP,IRET)
 C IRET.GE.3 MEANS RPT NOT RETURNED DUE TO MISSING DATA IN HEADR (RETURN)
       IF(IRET.GE.3)  GO TO 99
-      IF(ITP.EQ.1.OR.ITP.EQ.2.OR.ITP.EQ.3)  THEN
+      IF(ITP.EQ.1.OR.ITP.EQ.2.OR.ITP.EQ.3.OR.ITP.EQ.14)  THEN
 C-----------------------------------------------------------------------
 C   THE FOLLOWING PERTAINS TO WIND PROFILER REPORTS NOT ORIGINATING
 C                 FROM PILOT (PIBAL) FORMAT BULLETINS)
@@ -1223,11 +1226,12 @@ C  IW3UNPBF FORMAT (CATEGORY 12, 13, 08)
             RDATA2 = BMISS
             GO TO 99
          END IF
-      ELSE  IF(ITP.EQ.5 .OR. ITP.EQ.12)  THEN
+      ELSE  IF(ITP.EQ.5 .OR. ITP.EQ.12 .OR. ITP.EQ.13)  THEN
 C-----------------------------------------------------------------------
 C       THE FOLLOWING PERTAINS TO NEXRAD (VAD) WIND REPORTS
 C           ITP =  5 - VAD WINDS FROM RADAR CODED MESSAGE
 C             ITP = 12 - VAD WINDS FROM LEVEL 2 DECODER
+C           ITP = 13 - VAD WINDS FROM EUROPE, NEW ZEALAND
 C-----------------------------------------------------------------------
 C STORE THE UPPER-AIR DATA INTO UNPACKED QUASI-IW3UNPBF FORMAT (CAT. 4)
          CALL UNPKB706(LUNIT,RDATA,ITP,IRET)
@@ -1426,6 +1430,8 @@ C     THAT THEY ARE PACKED IN A NCEP BUFR FILE
 C 2014-03-13  D. A. KEYSER -- MODIFIED TO HANDLE VAD WINDS FROM LEVEL
 C     2 DECODER (SUBSET "NC002017") {IN ADDITION TO THOSE FROM RADAR
 C     CODED MESSAGE (SUBSET "NC002008")}
+C 2019-11-18 J. DONG -- ADDED HONG KONG PROFILER WINDS (NC002014) AND
+C            VAD WINDS FROM EUROPE AND NEW ZEALAND (NC002018)
 C
 C USAGE:    CALL UNPKB701(LUNIT,ITP,SUBSET,SUBSKP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -1541,6 +1547,10 @@ C  CONSTRUCT A 4-DIGIT YEAR AS LONG AS DATELEN(10) HAS BEEN CALLED
             IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS JAPANESE ",
      $       "METEOROLOGICAL AGENCY PROFILER WIND REPORTS")'
             ITP = 3
+         ELSE  IF(SUBSET.EQ.'NC002014')  THEN
+            IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS OTHER ",
+     $       "(e.g., HONG KONG) PROFILER WIND REPORTS")'
+            ITP = 14
          ELSE  IF(SUBSET.EQ.'NC002008')  THEN
             IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS NEXRAD ",
      $       "(VAD) WIND REPORTS FROM RADAR CODED MESSAGE")'
@@ -1549,6 +1559,10 @@ C  CONSTRUCT A 4-DIGIT YEAR AS LONG AS DATELEN(10) HAS BEEN CALLED
             IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS NEXRAD ",
      $       "(VAD) WIND REPORTS FROM LEVEL 2 DECODER")'
             ITP = 12
+         ELSE  IF(SUBSET.EQ.'NC002018')  THEN
+            IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS NEXRAD ",
+     $       "(VAD) WIND REPORTS FROM EUROPE AND NEW ZEALAND")'
+            ITP = 13
          ELSE  IF(SUBSET.EQ.'NC003001' .or. SUBSET.EQ.'NC003002' .or.
      $            SUBSET.EQ.'NC003003')  THEN
             IF(IPRINT.GE.1)  PRINT'(" THIS MESSAGE CONTAINS GOES ",
@@ -1804,7 +1818,7 @@ C  ALL TYPES -- LOAD MISSINGS INTO THE DATA PORTION
  
       RDATX(IDATS:IDMAX) = XMISS
 
-      IF(ITP.EQ.1.OR.ITP.EQ.2.OR.ITP.EQ.3)  THEN
+      IF(ITP.EQ.1.OR.ITP.EQ.2.OR.ITP.EQ.3.OR.ITP.EQ.14)  THEN
 
 C  WIND PROFILER -- LOAD INTEGER MISSING WHERE APPROPRIATE
 C                   {Current limit of "ILVLMX_11" Cat. 11 levels, not
@@ -1850,7 +1864,7 @@ C          (could be expanded somewhat w/o changing "IDMAX" if need be)
          IDATA(IDATS_13+0:IDATS_13+0+((ILVLMX_13-1)*3):3) = IMISS
          RDATA(IDATS_13+2:IDATS_13+2+((ILVLMX_13-1)*3):3) = 2.0
 
-      ELSE  IF(ITP.EQ.5 .OR. ITP.EQ.12)  THEN
+      ELSE  IF(ITP.EQ.5 .OR. ITP.EQ.12 .OR. ITP.EQ.13)  THEN
 
 C  VADWND -- LOAD DEFAULT OF 2.0 INTO HGHT CAT. 04 LEVEL QUALITY MARKER
 C         -- LOAD DEFAULT OF 4.0 INTO WIND CAT. 04 LEVEL QUALITY MARKER
@@ -1975,6 +1989,8 @@ C              0.00001 degree precision, and now that PREPBUFR encodes
 C              YOB (lat) and XOB (lon) at 0.00001 degree precision, this
 C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
+C 2019-11-28 J. DONG -- Added prep processing to process newly available
+C     VAD wind (NC002018) and profiler wind (NC002014) tanks
 C
 C USAGE:    CALL UNPKB703(LUNIT,RDATA,RDATA8_8,STNID,SUBSET,ITP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -2026,8 +2042,8 @@ C  -----------------------------------------------------
       CHARACTER*1  C8TAG(3,0:3)
       CHARACTER*8  STNID,SID,SUBSET
       character*20 sid_gnss
-      CHARACTER*60 HDRSTR
-      INTEGER  IDATA(IDMAX),KOUNTG(3,0:3),IRPTYP(12)
+      CHARACTER*60 HDRSTR, HDRSTR2
+      INTEGER  IDATA(IDMAX),KOUNTG(3,0:3),IRPTYP(14)
       LOGICAL  SKIP_CAT12
       REAL(8) HDR_8(12),RPID_8,VAR_8,BMISS,rdata8_8(2)
       REAL  HDR(12),RDATA(*),RDATX(IDMAX)
@@ -2040,9 +2056,11 @@ C  -----------------------------------------------------
       EQUIVALENCE  (RDATX,IDATA),(RPID_8,SID)
 
       DATA  XMISS/99999./,YMISS/99999.8/,IRPTYP/71,75,76,61,72,581,582,
-     $ 74,77,583,584,72/
+     $ 74,77,583,584,72,72,76/
       DATA  HDRSTR/
      $ 'CLAT CLON SELV YEAR MNTH DAYS HOUR MINU SECO RCHR RCMI SAID '/
+      DATA  HDRSTR2/
+     $'CLATH CLONH HSMSL YEAR MNTH DAYS HOUR MINU SECO RCHR RCMI SAID '/
       DATA  ITIMESG/0/,KOUNTG/12*0/,ITIMESS/0/,KOUNTS/0/
 
 C-----------------------------------------------------------------------
@@ -2076,7 +2094,11 @@ C-----------------------------------------------------------------------
 
       RDATX(1:IDMAX) = RDATA(1:IDMAX)
       HDR_8 = BMISS
-      CALL UFBINT(LUNIT,HDR_8,12,1,NLEV,HDRSTR);HDR=HDR_8
+      IF(ITP.EQ.14.OR.ITP.EQ.13)  THEN
+         CALL UFBINT(LUNIT,HDR_8,12,1,NLEV,HDRSTR2);HDR=HDR_8
+      ELSE
+         CALL UFBINT(LUNIT,HDR_8,12,1,NLEV,HDRSTR);HDR=HDR_8
+      END IF
       IF(NLEV.NE.1)  GO TO 9999
 
 C-----------------------------------------
@@ -2262,7 +2284,7 @@ cc    print'(" sid = ",A)', sid
 cpppppppppp
          if(sid.eq.'        ')  nlev = 0
 
-      IF(ITP.LE.3)  THEN
+      IF(ITP.LE.3.OR.ITP.EQ.14)  THEN
 
 C.......................................................................
 C  Wind Profiler:
@@ -2300,7 +2322,7 @@ cfix?       IF(VAR.LT.YMISS)  WRITE(STNID(1:2),'(I2.2)') NINT(VAR)
 cfix?       IF(VAR.LT.YMISS)  WRITE(STNID(3:5),'(I3.3)') NINT(VAR)
          END IF
 
-      ELSE IF(ITP.EQ.5 .OR. ITP.EQ.12)  THEN
+      ELSE IF(ITP.EQ.5 .OR. ITP.EQ.12 .OR. ITP.EQ.13)  THEN
 
 C.......................................................................
 C  NEXRAD (VAD) Wind:
@@ -2540,6 +2562,7 @@ C     UNITS OF KG/((M**2)*SEC) INSTEAD OF MM/HOUR (WINDSAT IS ONLY TYPE
 C     TO RETURN THIS)
 C 2008-09-25  D. A. KEYSER -- ADDED ASCAT SCATTEROMETER WINDS HERE NOW
 C     THAT THEY ARE PACKED IN A NCEP BUFR FILE
+C 2019-11-28  J. DONG -- ADDED TO HANDLE PROFILER WIND FROM HONG KONG
 C
 C USAGE:    CALL UNPKB704(LUNIT,RDATA,ITP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -2554,6 +2577,7 @@ C              - WIND PROFILER, =2 - CAP WIND PROFILER, =3 - JMA WIND
 C              - PROFILER, =6 - ERS SCATTEROMETER WIND, =7 - QUIKSCAT
 C              - SCATTEROMETER WIND, =10 - WINDSAT SCATTEROMETER WIND
 C              - (NAVY OR NESDIS), =11 - ASCAT SCATTEROMETER WIND}
+C              - =3 - HONG KONG WIND PROFILER
 C
 C   OUTPUT ARGUMENT LIST:
 C     RDATA    - SINGLE WIND PROFILER, ERS SCATTEROMETER, QUIKSCAT
@@ -2598,7 +2622,7 @@ C  -----------------------------------------------------
       DATA  SRFCS/'PMSL WD10  WS10  TMDB REHU REQV         '/
       RDATX(1:IDMAX) = RDATA(1:IDMAX)
       SFC_8 = BMISS
-      IF(ITP.LE.3)  THEN ! wind profiler
+      IF(ITP.LE.3.OR.ITP.EQ.14)  THEN ! wind profiler
          CALL UFBINT(LUNIT,SFC_8,8,1,NLEV,SRFCP);SFC=SFC_8
          ILVL = 1
       ELSE               ! scatterometer
@@ -2608,7 +2632,7 @@ C  -----------------------------------------------------
       IF(NLEV.NE.1)  THEN
 C.......................................................................
 C PROBLEM: THE NUMBER OF DECODED "LEVELS" IS NOT WHAT IS EXPECTED --
-         IF(ITP.LE.3)  THEN ! for wind profiler return but don't
+         IF(ITP.LE.3.OR.ITP.EQ.14)  THEN ! for wind profiler return but don't
                             ! reset iret
             PRINT 217, NLEV
   217 FORMAT(/'##W3UNPKB7: THE NUMBER OF DECODED "LEVELS" (=',I5,') ',
@@ -2749,7 +2773,8 @@ C              - UNPACKED FORMAT WITH ONLY HEADER AND SURFACE
 C              - INFORMATION FILLED IN (UPPER-AIR DATA MISSING)
 C     ITP      - THE TYPE OF WIND PROFILER REPORT THAT HAS BEEN
 C              - DECODED {=1 - NOAA Profiler Network (NPN),
-C              -  =2 - COOPERATIVE AGENCY PROFILERS (CAP), =3 - JAPAN)}
+C              - =2 - COOPERATIVE AGENCY PROFILERS (CAP),
+C              - =3 - JAPAN AND HONG KONG}
 C
 C   OUTPUT ARGUMENT LIST:
 C     RDATA    - SINGLE WIND PROFILER REPORT IN A QUASI-IW3UNPBF
@@ -3051,6 +3076,8 @@ C     CODED MESSAGE (SUBSET "NC002008")}; MAXIMUM NUMBER OF CAT. 04
 C     WINDS-BY-HEIGHT LEVELS ALLOWED (EXCLUDING FIRST, SURFACE, LEVEL),
 C     "ILVLMX_04", INCREASED FROM 64 TO 254 TO ACCOUNT FOR MORE LEVELS
 C     IN NEW VAD WINDS FROM LEVEL 2 DECODER
+C 2019-11-28 J. DONG -- MODIFIED TO HANDLE OTHER VAD WINDS FROM EUROPE
+C     AND NEW ZEALAND (NC002018)
 C
 C USAGE:    CALL UNPKB706(LUNIT,RDATA,ITP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -3060,7 +3087,8 @@ C              - UNPACKED FORMAT WITH ONLY HEADER INFORMATION FILLED
 C              - IN (CATEGORY 4 DATA MISSING)
 C     ITP      - THE TYPE OF REPORT THAT HAS BEEN DECODED {=5 -
 C              - NEXRAD (VAD) WIND FROM RADAR CODED MESSAGE; =12 -
-C              - NEXRAD (VAD) WIND FROM LEVEL 2 DECODER}
+C              - NEXRAD (VAD) WIND FROM LEVEL 2 DECODER; =13 -
+C              - NEXRAD (VAD) WIND FROM EUROPE AND NEW ZEALAND}
 C
 C   OUTPUT ARGUMENT LIST:
 C     RDATA    - SINGLE NEXRAD (VAD) REPORT IN A QUASI-IW3UNPBF
@@ -3085,11 +3113,11 @@ C  -----------------------------------------------------
 
       include 'inc_w3unpkb7.inc'
 
-      CHARACTER*25  UAIR1,UAIR2
+      CHARACTER*25  UAIR1,UAIR2,UAIR3
       INTEGER  IDATA(IDMAX)
       INTEGER QFV
       LOGICAL  SKIP_CAT12
-      REAL(8) UAIR_8(5,255),BMISS
+      REAL(8) UAIR_8(5,255),BMISS,UFBINT2_8(10,255)
       REAL  RMS(0:12),UAIR(5,255),RDATA(*),RDATX(IDMAX)
       COMMON /PKB7AA/BMISS
       COMMON /PKB7BB/kdate(8),ldate(8),KTIMCH,IPRINT,SKIP_CAT12
@@ -3102,6 +3130,7 @@ C  -----------------------------------------------------
       DATA  XMISS/99999./
       DATA  UAIR1/'HEIT WDIR WSPD QMWN RMSW '/
       DATA  UAIR2/'HEIT UWND VWND QMWN QFV2 '/
+      DATA  UAIR3/'HEIT WDIR WSPD QMWN QMRK '/
       DATA  RMS/1.,1.,2.,2.,3.,3.,4.,4.,5.,5.,6.,6.,7./
       RDATX(1:IDMAX) = RDATA(1:IDMAX)
       NSFC = 0
@@ -3124,6 +3153,16 @@ C FIRST CATEGORY 4 DATA LEVEL CONTAINS ONLY HEIGHT (ELEV)
          CALL UFBINT(LUNIT,UAIR_8,5,255,NLEV,UAIR1);UAIR=UAIR_8
       ELSE IF(ITP.EQ.12) THEN
          CALL UFBINT(LUNIT,UAIR_8,5,255,NLEV,UAIR2);UAIR=UAIR_8
+      ELSE IF(ITP.EQ.13) THEN
+C         CALL UFBINT(LUNIT,UAIR_8,5,255,NLEV,UAIR3);UAIR=UAIR_8
+         CALL UFBSEQ(LUNIT,UFBINT2_8(1,1),10,255,NLEV,'WPLVL')
+         DO I=1,NLEV
+            IF(UFBINT2_8(1,I).LT.BMISS) UAIR(1,I)=UFBINT2_8(1,I)
+            IF(UFBINT2_8(4,I).LT.BMISS) UAIR(2,I)=UFBINT2_8(4,I)
+            IF(UFBINT2_8(5,I).LT.BMISS) UAIR(3,I)=UFBINT2_8(5,I)
+            IF(UFBINT2_8(3,I).LT.BMISS) UAIR(4,I)=UFBINT2_8(3,I)
+            IF(UFBINT2_8(6,I).LT.BMISS) UAIR(5,I)=UFBINT2_8(6,I)
+         ENDDO
       END IF
       IF(IPRINT.GT.1)  PRINT 1068, NLEV
  1068 FORMAT(' THIS REPORT CONTAINS ',I3,' LEVELS OF DATA (NOT ',
@@ -3202,7 +3241,7 @@ C        DECODER)
          M = 3
          IF(IPRINT.GT.1)  PRINT 199, UAIR(3,I),M
          IF(UAIR(3,I).LT.XMISS) THEN
-            IF(ITP.EQ.5) THEN
+            IF(ITP.EQ.5 .OR. ITP.EQ.13) THEN
                RDATX(IDATS_04+ILC+2) = NINT(UAIR(3,I)*10.)
             ELSE IF(ITP.EQ.12) THEN
                RDATX(IDATS_04+ILC+2) = UAIR(3,I)
@@ -3229,15 +3268,16 @@ C                 REPORT LAYOUT FOR VALUES)
 
 C       ... CONVERT FROM METERS/SEC TO KNOTS
 
-            IF (ITP .EQ. 5) THEN
+            IF (ITP.EQ.5) THEN
 CDAKCDAK       KRMS = INT(1.93333 * UAIR(5,I))
                KRMS = INT(1.9425 * UAIR(5,I))
-               IF(KRMS.LT.13)  THEN
+CDONG:DEBUG
+               IF(KRMS.GE.0.AND.KRMS.LT.13)  THEN
                   RDATX(IDATS_04+ILC+4) = RMS(KRMS)
                ELSE
                  RDATX(IDATS_04+ILC+4) = 7.0
                END IF
-            ELSE IF (ITP .EQ. 12) THEN
+            ELSE IF (ITP.EQ.12 .OR. ITP.EQ.13) THEN
                QFV = UAIR(5,I)
                IF(QFV .EQ. 0) THEN
                  RDATX(IDATS_04+ILC+4) = 1.0

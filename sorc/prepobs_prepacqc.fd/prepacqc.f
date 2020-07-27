@@ -216,6 +216,10 @@ c                    ! vvvv DAK-future change perhaps to account for incr. lat/l
 c                    ! ^^^^ DAK-future change perhaps to account for incr. lat/lon precision
 c                      - The format for all print statements containing latitude and longitude
 c                        changed to print to 5 decimal places.
+C 2020-06-01  J. DONG  --  added the ability to encode the newly defined  TOPC_SEQ sequence 
+C             holding .DTHTOPC and TOPC with multiple replications for the ADPSFC.
+C 2020-06-18  J. DONG  --  added the ability to encode the newly defined BSYWND2 sequence 
+C             holding TPMI, MXGD and MXGS for the ADPSFC.
 c
 c Usage:
 c   Input files:
