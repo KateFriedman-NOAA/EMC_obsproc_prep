@@ -1,6 +1,6 @@
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-obsproc_prep release 5.2.2 --> released Jan 15, 2020
-                           --> implemented Mar 09, 2020
+obsproc_prep release 5.3.0 --> released Aug ??, 2020
+                           --> implemented ??? ??, 2020
 
 files:
    obsproc_prep/fix/glerldict.lmd
@@ -10,7 +10,7 @@ files:
    obsproc_prep/fix/prepobs_prep.bufrtable
    obsproc_prep/fix/syndat_syndata.slmask.t126.gaussian
    obsproc_prep/fix/syndat_weight
- M obsproc_prep/sorc/prepobs_cqcbufr.fd/cqcbufr.f
+   obsproc_prep/sorc/prepobs_cqcbufr.fd/cqcbufr.f
    obsproc_prep/sorc/prepobs_cqcbufr.fd/makefile
    obsproc_prep/sorc/prepobs_cqcbufr.fd/radcor.f
    obsproc_prep/sorc/prepobs_cqcvad.fd/cqcvad.f
@@ -36,7 +36,7 @@ files:
    obsproc_prep/sorc/prepobs_oiqcbufr.fd/oiqcbufr.f
    obsproc_prep/sorc/prepobs_prepacpf.fd/makefile
    obsproc_prep/sorc/prepobs_prepacpf.fd/prepacpf.f
- ? obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
+ M obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/indexc40.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/input_acqc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/makefile
@@ -57,21 +57,21 @@ files:
    obsproc_prep/sorc/prepobs_prepdata.fd/inc_w3unpkb7.inc
  M obsproc_prep/sorc/prepobs_prepdata.fd/iw3unpbf.f
    obsproc_prep/sorc/prepobs_prepdata.fd/makefile
-   obsproc_prep/sorc/prepobs_prepdata.fd/prepdata.f
- M obsproc_prep/sorc/prepobs_prepdata.fd/w3atovsunp.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/prepdata.f
+   obsproc_prep/sorc/prepobs_prepdata.fd/w3atovsunp.f
    obsproc_prep/sorc/prepobs_prepdata.fd/w3cnvxtovs.f
- M obsproc_prep/sorc/prepobs_prepdata.fd/w3rtovsunp.f
+   obsproc_prep/sorc/prepobs_prepdata.fd/w3rtovsunp.f
  M obsproc_prep/sorc/prepobs_prepdata.fd/w3unpkb7.f
- M obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovseds.f
+   obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovseds.f
    obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovsmnd.f
    obsproc_prep/sorc/prepobs_prepdata.fd/wordlength.f
- M obsproc_prep/sorc/prepobs_prevents.fd/gblevents_cdas.f
+   obsproc_prep/sorc/prepobs_prevents.fd/gblevents_cdas.f
    obsproc_prep/sorc/prepobs_prevents.fd/makefile
- M obsproc_prep/sorc/prepobs_prevents.fd/prevents.f
+   obsproc_prep/sorc/prepobs_prevents.fd/prevents.f
    obsproc_prep/sorc/prepobs_profcqc.fd/makefile
  M obsproc_prep/sorc/prepobs_profcqc.fd/profcqc.f
    obsproc_prep/sorc/syndat_syndata.fd/makefile
- M obsproc_prep/sorc/syndat_syndata.fd/syndata.f
+   obsproc_prep/sorc/syndat_syndata.fd/syndata.f
  M obsproc_prep/sorc/build.sh
    obsproc_prep/sorc/clean.sh
    obsproc_prep/sorc/install.sh
@@ -84,12 +84,111 @@ files:
    obsproc_prep/ush/getges.sh
    obsproc_prep/ush/getges_sig.sh
    obsproc_prep/ush/prepobs_glerladj.sh
-   obsproc_prep/ush/prepobs_makeprepbufr.sh
+ ? obsproc_prep/ush/prepobs_makeprepbufr.sh
    obsproc_prep/ush/prepobs_oiqcbufr.sh
    obsproc_prep/ush/prepobs_prepacqc.sh
    obsproc_prep/ush/prepobs_prevents.sh
    obsproc_prep/ush/prepobs_profcqc.sh
    obsproc_prep/ush/prepobs_syndata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ Source code and build changes (in sorc directory):
+   prepobs_prepacqc.fd/acftobs_qc.f:
+    - Modified subroutine invalid_qc to correct a run-time error revealed
+      when all debug options are enabled.  When t_prcn has a missing 
+      value, 1.0000000E+09, multiplying by 100 exceeds the 32-bit signed
+      integer maximum, 2,147,483,647.
+   prepobs_prepdata.fd/iw3unpbf.f:
+?   -
+   prepobs_prepdata.fd/prepdata.f
+?   -
+   prepobs_prepdata.fd/w3unpkb7.f
+?   -
+   prepobs_profcqc.fd/profcqc.f
+?   -
+   build.sh:
+?   - debug arg stuff ...
+   load_libs.rc:
+    - Updated to trim obsolete IBM and Dell specific settings.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (all)
+   bufr   11.3.0 (all)
+   w3emc   2.3.0 (prepobs_cqcbufr, prepobs_prepacpf, prepobs_prepacqc,
+                  prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   bacio   2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sp      2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sigio   2.1.0 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   nemsio  2.2.3 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep.  Jobs executing this version of
+   obsproc_prep will be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This can be implemented as soon as possible.
+   This must be implemented on Dell-p3 & Cray.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.3.0 of obsproc_global,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v3.1.1 of obsproc_prep_post,
+      v2.2.0 of obsproc_shared_bufr_dumplist,
+      v2.1.1 of obsproc_shared_bufr_remorest.
+
+   Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
+   needed. But note, please update:
+     obsproc_cdas.ver,
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+   to set obsproc_prep_ver to v5.3.0.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep release 5.2.2 --> released Jan 15, 2020
+                           --> implemented Mar 09, 2020
+
+files:
+ M obsproc_prep/sorc/prepobs_cqcbufr.fd/cqcbufr.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/iw3unpbf.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/w3atovsunp.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/w3rtovsunp.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/w3unpkb7.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovseds.f
+ M obsproc_prep/sorc/prepobs_prevents.fd/gblevents_cdas.f
+ M obsproc_prep/sorc/prepobs_prevents.fd/prevents.f
+ M obsproc_prep/sorc/prepobs_profcqc.fd/profcqc.f
+ M obsproc_prep/sorc/syndat_syndata.fd/syndata.f
+ M obsproc_prep/sorc/build.sh
+ M obsproc_prep/sorc/load_libs.rc
 ( A - added,  M - modified, D - deleted)
 
 

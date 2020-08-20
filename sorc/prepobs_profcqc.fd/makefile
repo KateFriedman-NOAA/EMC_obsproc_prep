@@ -48,7 +48,7 @@ LIBS = ${W3NCO_LIB4} ${BUFR_LIB4}
 CMD = prepobs_profcqc
 
 DEBUG =                -g -traceback
-DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
+#DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
 FFLAGS = -O2 -convert big_endian -list -assume noold_ldout_format -fixed $(DEBUG) $(DEBUG2)
 
 

@@ -46,7 +46,7 @@ LIBS = ${W3NCO_LIB4} ${BUFR_LIB4}
 CMD = prepobs_glerladj
 
 DEBUG =                -g -traceback
-#DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
+DEBUG2 =        -ftrapuv -check all -check nooutput_conversion -fp-stack-check -fstack-protector
 FFLAGS = -O3 -CB
 
 OBJS = glerldictmod.o glerlmain.o landtowater.o sped_to_dir.o td_to_q.o uv_to_sd.o watertoland.o uz.o uzl.o

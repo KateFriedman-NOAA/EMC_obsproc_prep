@@ -39,11 +39,6 @@ C             BENEFIT: There are currently 7790 stations in the METAR
 C                      dictionary. There are still stations missing that
 C                      will need to be added.  A 20000 limit should
 C                      suffice for quite some time,
-C 2020-06-01  J. DONG  --  added the ability to encode the newly defined 
-C             TOPC_SEQ sequence holding .DTHTOPC and TOPC with multiple
-C             replications for the ADPSFC. 
-C 2020-06-18  J. DONG  --  added the ability to encode the newly defined
-C             BSYWND2 sequence holding TPMI, MXGD and MXGS for the ADPSFC. 
 C
 C USAGE:
 C   INPUT FILES:
