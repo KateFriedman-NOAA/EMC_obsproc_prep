@@ -230,11 +230,12 @@ C              0.00001 degree precision, and now that PREPBUFR encodes
 C              YOB (lat) and XOB (lon) at 0.00001 degree precision, this
 C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
-C 2019-11-28 J. DONG -- Added prep processing to process newly available 
-C     VAD wind (NC002018) and profiler wind (NC002014) tanks
-C 2020-01-06  J. Dong -- In subroutine W3UNPKB7, changed the windowing
-C     decade from 20 to 40 for cases when the year is represented by
-C     2 digits instead of 4.
+C 2020-08-20 J. DONG -- 
+C   - Added processing to encode newly available VAD wind (NC002018)
+C     and profiler wind (NC002014) tanks into prepbufr files. 
+C   - In subroutine W3UNPKB7, changed the windowing decade from 20 to
+C     40 for cases when the year is represented by 2 digits instead
+C     of 4.
 C
 C
 C
@@ -1430,7 +1431,7 @@ C     THAT THEY ARE PACKED IN A NCEP BUFR FILE
 C 2014-03-13  D. A. KEYSER -- MODIFIED TO HANDLE VAD WINDS FROM LEVEL
 C     2 DECODER (SUBSET "NC002017") {IN ADDITION TO THOSE FROM RADAR
 C     CODED MESSAGE (SUBSET "NC002008")}
-C 2019-11-18 J. DONG -- ADDED HONG KONG PROFILER WINDS (NC002014) AND
+C 2020-08-20 J. DONG -- ADDED HONG KONG PROFILER WINDS (NC002014) AND
 C            VAD WINDS FROM EUROPE AND NEW ZEALAND (NC002018)
 C
 C USAGE:    CALL UNPKB701(LUNIT,ITP,SUBSET,SUBSKP,IRET)
@@ -1989,8 +1990,9 @@ C              0.00001 degree precision, and now that PREPBUFR encodes
 C              YOB (lat) and XOB (lon) at 0.00001 degree precision, this
 C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
-C 2019-11-28 J. DONG -- Added prep processing to process newly available
-C     VAD wind (NC002018) and profiler wind (NC002014) tanks
+C 2020-08-20 J. DONG --
+C   - Added processing to encode newly available VAD wind (NC002018)
+C     and profiler wind (NC002014) tanks into prepbufr files. 
 C
 C USAGE:    CALL UNPKB703(LUNIT,RDATA,RDATA8_8,STNID,SUBSET,ITP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -2562,7 +2564,7 @@ C     UNITS OF KG/((M**2)*SEC) INSTEAD OF MM/HOUR (WINDSAT IS ONLY TYPE
 C     TO RETURN THIS)
 C 2008-09-25  D. A. KEYSER -- ADDED ASCAT SCATTEROMETER WINDS HERE NOW
 C     THAT THEY ARE PACKED IN A NCEP BUFR FILE
-C 2019-11-28  J. DONG -- ADDED TO HANDLE PROFILER WIND FROM HONG KONG
+C 2020-08-20  J. DONG -- ADDED TO HANDLE PROFILER WIND FROM HONG KONG
 C
 C USAGE:    CALL UNPKB704(LUNIT,RDATA,ITP,IRET)
 C   INPUT ARGUMENT LIST:
@@ -3076,7 +3078,7 @@ C     CODED MESSAGE (SUBSET "NC002008")}; MAXIMUM NUMBER OF CAT. 04
 C     WINDS-BY-HEIGHT LEVELS ALLOWED (EXCLUDING FIRST, SURFACE, LEVEL),
 C     "ILVLMX_04", INCREASED FROM 64 TO 254 TO ACCOUNT FOR MORE LEVELS
 C     IN NEW VAD WINDS FROM LEVEL 2 DECODER
-C 2019-11-28 J. DONG -- MODIFIED TO HANDLE OTHER VAD WINDS FROM EUROPE
+C 2020-08-20 J. DONG -- MODIFIED TO HANDLE OTHER VAD WINDS FROM EUROPE
 C     AND NEW ZEALAND (NC002018)
 C
 C USAGE:    CALL UNPKB706(LUNIT,RDATA,ITP,IRET)
