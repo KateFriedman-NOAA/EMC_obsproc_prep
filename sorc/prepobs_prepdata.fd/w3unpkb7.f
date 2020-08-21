@@ -1230,7 +1230,7 @@ C  IW3UNPBF FORMAT (CATEGORY 12, 13, 08)
 C-----------------------------------------------------------------------
 C       THE FOLLOWING PERTAINS TO NEXRAD (VAD) WIND REPORTS
 C           ITP =  5 - VAD WINDS FROM RADAR CODED MESSAGE
-C             ITP = 12 - VAD WINDS FROM LEVEL 2 DECODER
+C           ITP = 12 - VAD WINDS FROM LEVEL 2 DECODER
 C           ITP = 13 - VAD WINDS FROM EUROPE, NEW ZEALAND
 C-----------------------------------------------------------------------
 C STORE THE UPPER-AIR DATA INTO UNPACKED QUASI-IW3UNPBF FORMAT (CAT. 4)
@@ -3277,7 +3277,16 @@ CDONG:DEBUG
                ELSE
                  RDATX(IDATS_04+ILC+4) = 7.0
                END IF
-            ELSE IF (ITP.EQ.12 .OR. ITP.EQ.13) THEN
+            ELSE IF (ITP.EQ.12) THEN
+               QFV = UAIR(5,I)
+               IF(QFV .EQ. 0) THEN
+                 RDATX(IDATS_04+ILC+4) = 1.0
+               ELSE IF(QFV .EQ. 1.0) THEN
+                 RDATX(IDATS_04+ILC+4) = 2.0
+               ELSE
+                 RDATX(IDATS_04+ILC+4) = 7.0
+               END IF
+            ELSE IF (ITP.EQ.13) THEN
                QFV = UAIR(5,I)
                IF(QFV .EQ. 0) THEN
                  RDATX(IDATS_04+ILC+4) = 1.0
