@@ -1325,8 +1325,11 @@ C 2018-07-02  S.Melchior-- In function W3FIZZ, added call to UFBINT
 C     routine to pull in HOVI (horizontal visibility) value for mesonet
 C     message types (NC255).
 C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from 
-C        from other countries (e.g. Europe, New Zealand) (NC002018) and
+C        other countries (e.g. Europe, New Zealand) (NC002018) and
 C        Hong Kong wind profiler data (NC002014).  
+C 2020-05-18 J. Dong -- Differentiates between these and existing Radar Coded
+C     Message (RCM) VAD wind reports via use of report subtype (TSB=1
+C     for RCM, =2 for Level 2 and =3 for other vadwnd).
 C
 C
 C USAGE:
@@ -3098,7 +3101,7 @@ C  IN INTERFACE WITH SUBROUTINE IW3UNPBF
      $ FLACMS,IACFTH,SUBSKP,JPGPSD,GWINDO,RASS,TWINDO,JPWDSD,IWWNDO,
      $ FLDMFR,WRMISS,SKGP45,JPASCD,IAWNDO,npkrpt,SKGNSS
       NAMELIST/PARM/IUNIT
-      CALL W3TAGB('PREPOBS_PREPDATA',2019,0339,0050,'EMC')
+      CALL W3TAGB('PREPOBS_PREPDATA',2020,0233,0050,'EMC')
 C DETERMINE MACHINE WORD LENGTH (BYTES) FOR BOTH INTEGERS AND REALS
       CALL WORDLENGTH(LWI,LWR)
       PRINT 2213, LWI,LWR
@@ -3141,7 +3144,7 @@ C    CARDS FILE, JUST AFTER NAMELIST TASK, BY THE MAKE_PREPBUFR SCRIPT)
          PRINT 321, NET(1)
       END IF
   321 FORMAT(/37X,'WELCOME TO THE UNIVERSAL ',A14,' DATA PREPROCESSOR'/
-     $ 48X,'WCOSS VERSION CREATED  9 Dec 2019 db ll')
+     $ 48X,'WCOSS VERSION CREATED 20 Aug 2020')
       call bvers(cvstr)
       print 3211, cvstr
  3211 FORMAT(48X,'--BUFRLIB VERSION USED = v',a,/)
@@ -10647,18 +10650,6 @@ C      - Replace machine length lat/lon {HDR(3), HDR(2)} with R*8 lat/
 C        lon (ALAT_8, ALON_8) in print statements.
 C        BENEFIT: Values are now precise to 10**5 degrees (was not the
 C                 case after 2016-09-05 change above).
-C 2020-05-08  J. DONG -- ADDED TO ENCODE THE HEIGHT OF SENSOR ABOVE
-C     LOCAL GROUND (HSALG) FOR THE MAX/MIN TEMPERATURE (MXTM AND MITM)
-C     OF ADPSFC.
-C 2020-06-01  J. DONG -- ADDED TO ENCODE THE TIME PERIOD OR DISPLACEMENT
-C     MAX GUST WIND DIRECTION AND SPEED (TPMI, MXGD AND MXGS) OF ADPSFC.
-C 2020-06-15  J. DONG -- ADDED TO ENCODE THE HEIGHT OF SENSOR ABOVE LOCAL
-C     GROUND (HSALGV) FOR THE HORIZONTAL VISIBILITY (HOVI) OF ADPSFC.
-C 2020-06-22  J. DONG -- ADDED TO ENCODE THE TIME PERIOD OR DISPLACEMENT
-C     (TPHR) FOR THE PAST WEATHER MEASUREMENTS OF ADPSFC.
-C 2020-07-15  J. DONG -- IN W3FIZZ: MADE CHANGES TO ENCODE '.DTMMXGS MXGS'
-C     IN TAC FORMAT TANKS BY USING BSYWND2 SEQUENCE (TPMI, MXGD AND MXGS)
-C     IN BUFR FORMAT TANKS.
 C
 C USAGE:    CALL FILLX(LL,IERF)
 C   INPUT ARGUMENT LIST:
@@ -12642,6 +12633,9 @@ C 2014-11-25  D. A. Keyser -- Removed input argument "IDATE" (central
 C     date) from call to subr. W3CNVXTOVS since year {IDATE(1)} is no
 C     longer needed to obtain BUFR satellite ID.
 C 2020-02-13 J. Dong -- Added to define IDSDAT
+C 2020-08-01 J. Dong -- Modified the code to handle invalid floating
+C     errors during the run when the code was compiled with debug
+C     options turning on. 
 C
 C USAGE:    CALL SATEDS
 C   INPUT FILES:
@@ -17951,22 +17945,6 @@ C        Section 1 of a newly opened BUFR message (via OPENMG) in some
 C        logic that is currently not invoked.
 C        BENEFIT: Ensures minutes will be encoded into Section 1 of
 C                 messages if this logic is ever invoked.
-C 2020-05-08  J. DONG -- ADDED TO ENCODE THE HEIGHT OF SENSOR ABOVE 
-C     LOCAL GROUND (HSALG) FOR THE MAX/MIN TEMPERATURE (MXTM AND MITM)
-C     OF ADPSFC.
-C 2020-06-01  J. DONG -- CHANGED TOPC_SEQ FROM 1 REPLICATION TO MULTIPLE
-C     REPLICATIONS AND TELL THE BUFR LIB THE NUMBER OF REPLICATIONS
-C     (NOBS3(1)) TO HOLD PRECIP.
-C 2020-06-15  J. DONG -- ADDED TO ENCODE THE HEIGHT OF SENSOR ABOVE LOCAL
-C     GROUND (HSALGV) FOR THE HORIZONTAL VISIBILITY (HOVI) OF ADPSFC.
-C 2020-06-18  J. DONG -- ADDED TO ENCODE THE TIME PERIOD OR DISPLACEMENT,
-C     MAX GUST WIND DIRECTION AND SPEED (TPMI, MXGD AND MXGS) OF
-C     ADPSFC.  TELL THE BUFR LIB THE NUMBER OF REPLICATIONS (NOBS3(8)).
-C 2020-06-22  J. DONG -- ADDED TO ENCODE THE TIME PERIOD OR DISPLACEMENT
-C     (TPHR) FOR THE PAST WEATHER MEASUREMENTS OF ADPSFC.
-C 2020-07-15  J. DONG -- MADE CHANGES TO ENCODE '.DTMMXGS MXGS' IN TAC
-C     FORMAT TANKS BY USING BSYWND2 SEQUENCE (TPMI, MXGD AND MXGS) IN
-C     BUFR FORMAT TANKS.
 C
 C USAGE:    CALL W3FIZZ(IER)
 C   OUTPUT ARGUMENT LIST:
