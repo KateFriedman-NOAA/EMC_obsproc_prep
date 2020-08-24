@@ -1069,9 +1069,7 @@ EXECSYND=${EXECSYND:-${HOMEobsproc_prep}/exec}
 PARMSYND=${PARMSYND:-${HOMEobsproc_network}/parm}
 FIXSYND=${FIXSYND:-${HOMEobsproc_prep}/fix}
 
-echo "DONGJ1:  $GETGUESS"
 GETGUESS=${GETGUESS:-YES}
-echo "DONGJ2:  $GETGUESS"
 if [ "$GETGUESS" = 'YES' ]; then
    USHGETGES=${USHGETGES:-${HOMEobsproc_prep}/ush}
    if [ "$NEMSIO_IN" = .true. ]; then
@@ -1178,7 +1176,7 @@ if [ -s ${COMSP}tropcy_relocation_status.$tmmark ]; then
       fi
    fi
 fi
-echo "DONGJ3:  $GETGUESS"
+
 if [ "$RELOCATION_HAS_RUN" != 'YES' -a "$GETGUESS" != 'NO' ]; then
 
    if [ $cyc = 00 -o $cyc = 06 -o $cyc = 12 -o $cyc = 18 ]; then

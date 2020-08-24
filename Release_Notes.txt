@@ -84,7 +84,7 @@ files:
    obsproc_prep/ush/getges.sh
    obsproc_prep/ush/getges_sig.sh
    obsproc_prep/ush/prepobs_glerladj.sh
- ? obsproc_prep/ush/prepobs_makeprepbufr.sh
+   obsproc_prep/ush/prepobs_makeprepbufr.sh
    obsproc_prep/ush/prepobs_oiqcbufr.sh
    obsproc_prep/ush/prepobs_prepacqc.sh
    obsproc_prep/ush/prepobs_prevents.sh
