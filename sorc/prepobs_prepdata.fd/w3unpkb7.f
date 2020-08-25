@@ -233,9 +233,10 @@ C              0.00001 degrees in all downstream processing.
 C 2020-01-06  J. Dong -- In subroutine W3UNPKB7, changed the windowing
 C     decade from 20 to 40 for cases when the year is represented by
 C     2 digits instead of 4.
-C 2020-08-20 J. DONG -- Added processing to encode newly available VAD
-C     wind (NC002018) and profiler wind (NC002014) tanks into prepbufr
-C     files. 
+C 2020-08-20 J. DONG -- 
+C     - Added processing to encode BUFR format VAD  wind (NC002018)
+C       profiler wind (NC002014) tanks into prepbufr files.
+C     - Defined IDSDAT to eliminate Boundary Run-Time Check Failures.
 C
 C
 C
