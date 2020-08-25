@@ -230,12 +230,12 @@ C              0.00001 degree precision, and now that PREPBUFR encodes
 C              YOB (lat) and XOB (lon) at 0.00001 degree precision, this
 C              change will ensure that lat/lon is always accurate to
 C              0.00001 degrees in all downstream processing.
-C 2020-08-20 J. DONG -- 
-C   - Added processing to encode newly available VAD wind (NC002018)
-C     and profiler wind (NC002014) tanks into prepbufr files. 
-C   - In subroutine W3UNPKB7, changed the windowing decade from 20 to
-C     40 for cases when the year is represented by 2 digits instead
-C     of 4.
+C 2020-01-06  J. Dong -- In subroutine W3UNPKB7, changed the windowing
+C     decade from 20 to 40 for cases when the year is represented by
+C     2 digits instead of 4.
+C 2020-08-20 J. DONG -- Added processing to encode newly available VAD
+C     wind (NC002018) and profiler wind (NC002014) tanks into prepbufr
+C     files. 
 C
 C
 C
@@ -1065,7 +1065,7 @@ c.......................................................................
          INDEX = 0
          JDATE(1:3) = IDATE(1:3)
          JDATE(4) = 0
-         JDATE(5) = IDATE(4) 
+         JDATE(5) = IDATE(4)
          JDATE(6:8) = 0
          PRINT 6681, IDATE
  6681 FORMAT(/' %%% REQUESTED "CENTRAL" DATE IS :',I5,3I3,'  0'/)

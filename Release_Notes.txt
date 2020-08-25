@@ -105,9 +105,13 @@ files:
    prepobs_prepdata.fd/prepdata.f
 ?   -
    prepobs_prepdata.fd/w3unpkb7.f
-?   -
+    - Added processing to encode newly available VAD winds from Europe
+      and New Zealand (NC002018) and profiler winds from Hong Kong
+      (NC002014) into prepbufr files.
    prepobs_profcqc.fd/profcqc.f
-?   -
+    - Increase levels NL to 300 from 150.
+      BENEFIT: allows for future processing for BUFR format proflr and
+               vadwnd data.
    build.sh:
 ?   - debug arg stuff ...
    load_libs.rc:
