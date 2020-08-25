@@ -127,6 +127,12 @@ files:
  ---------------
   (For specific network changes see " Output changes" in Release Notes for that
    network, if that network executes this version of obsproc_prep.)
+  - Even though there are no code changes to obsproc_cdas, obsproc_nam,
+    obsproc_rap, obsproc_rtma, and obsproc_urma, there are output changes for
+    these networks.
+    - The prepbufr file will be slightly larger than production:
+      - *.tCCz.prepbufr.tm0*
+    - The J*_PREP job processes will run slightly longer than production (< ~10s inc).
 
 
  Libraries:
