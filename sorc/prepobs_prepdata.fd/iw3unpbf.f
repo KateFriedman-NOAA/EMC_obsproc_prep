@@ -484,14 +484,11 @@ C 2018-10-22  D. A. KEYSER -- (changes are in function R06UBF)
 C     Changes to handle new GOES-16 & up satellite winds which do not
 C     contain a report id (STNID) and have high-res lat/lon (amongst
 C     other differences vs. GOES-15 & down).
-C 2020-08-20 C. Hill --
-C   - High-resolution position data are read from BUFR marine data messages
-C     using existing logic originally (2004-02-02) added for MesoNet data.
 C 2020-08-20 J. Whiting --
-C   - Assigned input report type values of 563-4 to fixed and drifting
-C     BUFR-feed buoy data, respectively.
-C   - Set SST values for BUFR-feed fixed & drifting buoy data streams
-C    to be taken from SST0 field.
+C     - Assigned input report type values of 563-4 to fixed and drifting
+C       BUFR-feed buoy data, respectively.
+C     - Set SST values for BUFR-feed fixed & drifting buoy data streams
+C       to be taken from SST0 field.
 C 2020-08-20  J. DONG --
 C   - In function I02UBF:
 C     - Changed the windowing decade from 20 to 40 for cases when the
