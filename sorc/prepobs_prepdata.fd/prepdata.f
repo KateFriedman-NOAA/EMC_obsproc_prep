@@ -1324,12 +1324,14 @@ C                 RTMA_RU where minutes here can be 15, 30 or 45.
 C 2018-07-02  S.Melchior-- In function W3FIZZ, added call to UFBINT
 C     routine to pull in HOVI (horizontal visibility) value for mesonet
 C     message types (NC255).
-C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from 
-C        other countries (e.g. Europe, New Zealand) (NC002018) and
-C        Hong Kong wind profiler data (NC002014).  
-C 2020-05-18 J. Dong -- Differentiates between these and existing Radar Coded
-C     Message (RCM) VAD wind reports via use of report subtype (TSB=1
-C     for RCM, =2 for Level 2 and =3 for other vadwnd).
+C 2020-08-20 J. Dong -- Added to handle new VAD wind data reported from 
+C     - Added changes to handle new VAD wind data reported from other
+C       countries (e.g. Europe, New Zealand) (NC002018) and Hong Kong
+C       wind profiler data (NC002014). Future feature. 
+C     - Added logic to differentiate between these and existing Radar
+C       Coded Message (RCM) VAD wind reports via use of report subtype
+C       (TSB=1 for RCM, =2 for Level 2 and =3 for other vadwnd). Future
+C       feature.
 C
 C
 C USAGE:
@@ -3814,13 +3816,16 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2019-12-02 J. Dong -- Added to handle new VAD wind data reported from
-C        from other countries (e.g. Europe, New Zealand) (NC002018) and
-C        Hong Kong wind profiler data (NC002014).
-C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
-C 2020-05-18 J. Dong -- Differentiates between these and existing Radar Coded
-C     Message (RCM) VAD wind reports via use of report subtype (TSB=1
-C     for RCM, =2 for Level 2 and =3 for other vadwnd).
+C 2020-08-20 J. Dong -- 
+C     - Changes added to handle new VAD wind data reported from other
+C       countries (e.g. Europe, New Zealand) (NC002018) and Hong Kong
+C       wind profiler data (NC002014). Future feature.
+C     - Logic added to differentiate between these and existing Radar
+C       Coded Message (RCM) VAD wind reports via use of report subtype
+C       (TSB=1 for RCM, =2 for Level 2 and =3 for other vadwnd). Future
+C       feature.
+C     - Changed subset to subset_t.  Defined subset_t and IDSDAT to 
+C       eliminate Boundary Run-Time Check Failures.
 C
 C USAGE:    CALL PREP
 C   INPUT FILES:
@@ -4011,7 +4016,7 @@ C CHECK TO SEE IF AIRCFT DATA SHOULD BE PROCESSED
      $    GO TO 7001
       ELSE IF(NN.EQ.4)  THEN
 !orig    SUBSKP(005,001:090) = .TRUE.             
-         SUBSKP(005,001:091) = .TRUE.              ! jaw db
+         SUBSKP(005,001:091) = .TRUE.
 C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
          LOOP1: DO II=1,6
             LOOP1n1: DO JJ=1,2
@@ -4633,7 +4638,7 @@ C SET UP FOR LATER CHECK IF PROFILER RPT IS W/I TIME WINDOW {PWINDO(3)}
       ELSE  IF(IDATA(9).EQ.76)  THEN
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 C        CHECKS ON JMA (JAPANESE) WIND PROFILER REPORTS (R. TYPE 76)
-CJDONG             HONG KONG WIND PROFILER REPORTS (R. TYPE 76)
+C                  HONG KONG WIND PROFILER REPORTS (R. TYPE 76)
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
          INSTR = 8
 C SET UP FOR LATER CHECK IF PROFILER RPT IS W/I TIME WINDOW {PWINDO(4)}
@@ -4642,7 +4647,7 @@ C SET UP FOR LATER CHECK IF PROFILER RPT IS W/I TIME WINDOW {PWINDO(4)}
       ELSE  IF(IDATA(9).EQ.72)  THEN
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 C           CHECKS ON VAD (NEXRAD) WIND REPORTS (R. TYPE 72)
-CJDONG      OTHER VAD WIND REPORTS FROM EUROPE ETC (R. TYPE 72)
+C           OTHER VAD WIND REPORTS FROM EUROPE ETC (R. TYPE 72)
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
          INSTR = 4
 C SET UP FOR LATER CHECK IF VAD WIND REPORT IS W/I TIME WINDOW (VWINDO)
@@ -4702,10 +4707,7 @@ C-----------------------------------------------------------------------
 C CALL SUBR. 'RPTLBL' TO STORE REPORT HEADER INTO HDR(4),HDR(5),HDR(7),
 C                          HDR(9)-HDR(15), ALAT_8, ALON_8
 C-----------------------------------------------------------------------
-      irpt=nint(hdr(7))                                         ! jaw db
       CALL RPTLBL(CYCLET)
-      print*,'db: prep - aftr RPTLBL',irpt,nint(hdr(7))              ! jaw db
-                                                                ! jaw db
 C STORE WORD 8 OF REPORT HEADER (REPORT "SUBTYPE") AS 2 FOR DROPS
 C  (STORED AS 1 FOR RECCOS IN SUBR. GETC06)
       IF(IDATA(9).EQ.31)  HDR(8) = 2.
@@ -5021,7 +5023,8 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2020-02-13 J. DONG -- Added to define IDSDAT
+C 2020-08-20 J. DONG -- Defined IDSDAT to eliminate Boundary Run-Time
+C              Check Failures.
 C
 C USAGE:    CALL UNPREPBF(IFLAG,CYCLET,IOPENED,DSNAME,IDSDAT,IDSDMP_8,*)
 C   INPUT  ARGUMENT LIST:
@@ -5110,21 +5113,8 @@ C  RETURN JUST THE DATA SET INFO (DSNAME, IDSDAT AND IDSDMP_8)}
       NOBS3  = 0      ! initialize NOBS3  array before reading any rpts
       obs8_8 = bmiss  ! initialize obs8_8 array before reading any rpts
       RDATA2 = BMISS  ! initialize rdata2 array before reading any rpts
-!jaw  IF(IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3,
-!jaw $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER).EQ.0) GO TO 50
-      ii=IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3, !  jaw db
-     $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER)              !  jaw db
-
-!!    if (dsname.eq."SFCSHP") then                                     ! jaw db
-!     if (trim(stnid).eq."5401667".or.trim(stnid).eq."5501594") then   ! jaw db
-!       print'(a,$)','db: unprepbf: iw3unpbf'                          ! jaw db
-!!      print'(a,$)',' dsname="'//trim(dsname)//'"'                    ! jaw db
-!       print'(a,$)','  stnid="'//trim( stnid)//'"'                    ! jaw db
-!       print'(a,2(1x,f10.5),$)',' ll=',obs8_8(1),obs8_8(2)            ! jaw db
-!       print*,' idat9=',idata(9)                                      ! jaw db
-!     endif ! dsname = sfcshp                                          ! jaw db
-      if (ii.EQ.0) GO TO 50                                            ! jaw db
-
+      IF(IW3UNPBF(NFILE,RDATA,STNID,CRES1,CRES2,CBULL,OBS2,OBS3,NOBS3,
+     $ obs8_8,DSNAME,IDSDAT,IDSDMP_8,SUBSET_d,SUBSKP,IER).EQ.0) GO TO 50
    78 CONTINUE
 C-----------------------------------------------------------------------
       IF(IER.EQ.1)  THEN
@@ -5455,9 +5445,6 @@ C  hdr(3) {obtained from rdata(1)} into alat_8
       end if
 C DUMP REPORT TYPE GOES IN HDR(7)
       HDR(7)  = IDATA(9)
-
-!      if (int(NINT(HDR(7))/10).eq.56) print*,'db: rptlbl h7',hdr(7) ! jaw db
-
 C REPORT SEQUENCE NUMBER GOES IN HDR(11) (ONLY CURRENTLY FOR MDCRS
 C  AIRCRAFT REPORTS HERE)
 C INSTRUMENT TYPE GOES IN HDR(9)
@@ -10798,10 +10785,6 @@ C CORRECT HGHT LBL TO THICK. TO 1000 MB FOR RTOVS OR ATOVS SAT. SNDINGS
   905 FORMAT(/'>> (',I6,') ID ',A8,' @',F11.5,' N LAT/',F10.5,' E LON:',
      $ '# LVLS=',I4,'  D-TIM=',F9.5,' HR  ANL RT=',I3,'/',I4,'  DUMP ',
      $ 'RT=',I3,'  IT=',I3.3,' ELV=',I5)
-
-       if (int(NINT(HDR(7))/10).eq.56)                              ! jaw db
-     $  print*,'db: fillx h7-10 -',(hdr(j+6),j=1,4)                 ! jaw db
-
       ELSE
          PRINT 915, KOUNT,STNID,alat_8,alon_8,MLEV,HDR(4),NINT(HDR(6)),
      $    NINT(HDR(7)),NINT(HDR(9)),NINT(HDR(10)),NINT(RDATA2(2))
@@ -12632,10 +12615,10 @@ C     WORD 6 (SO IT CAN LATER BE ENCODED INTO PREPBUFR FILE)
 C 2014-11-25  D. A. Keyser -- Removed input argument "IDATE" (central
 C     date) from call to subr. W3CNVXTOVS since year {IDATE(1)} is no
 C     longer needed to obtain BUFR satellite ID.
-C 2020-02-13 J. Dong -- Added to define IDSDAT
-C 2020-08-01 J. Dong -- Modified the code to handle invalid floating
-C     errors during the run when the code was compiled with debug
-C     options turning on. 
+C 2020-08-20 J. Dong -- 
+C     - Defined IDSDAT to eliminate Boundary Run-Time Check Failures.
+C     - Modified the code to handle invalid float errors during the
+C       run when the code was compiled with debug options enabled.
 C
 C USAGE:    CALL SATEDS
 C   INPUT FILES:
@@ -13468,7 +13451,8 @@ C     SUBR. UPON FIRST CALL FOR ATOVS DATA (SIGNALS INPUT BUFR FILE
 C     IS A DATA DUMP)
 C 2001-10-10  D. A. KEYSER -- STORES BUFR SATELLITE ID IN UNPACKED
 C     IW3UNPBF WORD 6 SO IT CAN LATER BE ENCODED INTO PREPBUFR FILE
-C 2020-02-13 J. Dong -- Added to define IDSDAT
+C 2020-08-20 J. Dong -- Defined IDSDAT to eliminate Boundary Run-Time
+C     Check Failures.
 C
 C USAGE:    CALL SATBFR
 C   INPUT FILES:
@@ -14060,7 +14044,8 @@ C        PREPBUFR file.
 C        BENEFIT: Accounts for possibility of center (cycle) date in
 C                 PREPBUFR file not being zero with addition of new
 C                 RTMA_RU where minutes here can be 15, 30 or 45.
-C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
+C 2020-08-20 J. Dong -- Changed subset to subset_t. Defined subset_t
+C        and IDSDAT to eliminate Boundary Run-Time Check Failures.
 C
 C USAGE:    CALL GOESDG
 C   INPUT FILES:
@@ -15269,7 +15254,8 @@ C     quality mark read from the ADPSFC dump file).
 C 2015-04-16  D. A. Keyser -- Call to subr. LNDCHK now uses new 16
 C     point check for determining if marine reports in the N.H. are
 C     over land or sea.
-C 2020-02-13 J. Dong -- Added to define IDSDAT
+C 2020-02-13 J. Dong -- Defined IDSDAT to eliminate Boundary Run-time
+C     Check Failures.
 C
 C USAGE:    CALL SFCDTA
 C   INPUT FILES:
@@ -15424,10 +15410,6 @@ C  i.e., npkrpt=T for the particular type)
       ipstnflg = 0
 C CALL UNPREPBF TO UNPACK THE NEXT REPORT
       CALL UNPREPBF(IFLAG,CYCLET,IOPENED,DSNAME,IDSDAT,IDSDMP_8,*7000)
-
-!     if (trim(dsname).eq.'SFCSHP')                                    ! jaw db
-!    $  print*,"db: sfcdta aftr unprepbf()",iflag,iopened,trim(dsname) ! jaw db
-
       IF(IFLAG.EQ.1)  THEN
 C.......................................................................
 C IFLAG = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
@@ -15501,11 +15483,7 @@ C  ... CHECK FOR RECCOS WITH PMSL OBS - VALID SPLASH-LVL REPORTS
             END IF
          END IF
       END IF
-
       IF(ITYP.EQ.-99999)  ITYP = ISSEL(IDATA(9))
-
-      if (idata(9).eq.563.or.idata(9).eq.564)                     ! jaw db
-     $  print*,'db: sfcdta ityp,idata(9)',ityp,idata(9)           ! jaw db
 
 C THE TYPE OF REPORT JUST UNPACKED IS INDICATED BY 'ITYP'
 C   ITYP =  1 ===> SURFACE SYNOPTIC LAND STATION (FIXED)
@@ -15525,8 +15503,6 @@ C   ITYP = 13-19 > RESERVED FOR FUTURE TYPES
 C   ITYP = 20 ===> RECCO/DROPWINSONDE WITH NO SPLASH-LEVEL MASS
 C                  INFORMATION (INVALID TYPE)
 C   ITYP = 30 ===> "OTHER" (INVALID TYPE)
-
-!     if(ityp.eq.4) print*,'db: sfcdta ityp=',ityp              ! jaw db
 
       IFLSF = 0
       IFLTH = 0
@@ -15579,9 +15555,7 @@ C-----------------------------------------------------------------------
 C CALL SUBR. 'RPTLBL' TO STORE REPORT HEADER INTO HDR(4),HDR(5),HDR(7),
 C                          HDR(9)-HDR(15), ALAT_8, ALON_8
 C-----------------------------------------------------------------------
-      irpt=nint(hdr(7))                                         ! jaw db
       CALL RPTLBL(CYCLET)
-!     print*,'db: sfcdta - aftr RPTLBL',irpt,nint(hdr(7))       ! jaw db
 C-----------------------------------------------------------------------
 C        CALL SUBR. 'TIMCHK' TO CHECK IF REPORT IS W/I PROPER
 C              TIME WINDOW OF CYCLE TIME (IER =1 TOSS RPT)
@@ -15589,18 +15563,11 @@ C-----------------------------------------------------------------------
       TIMWIN_e = -FWINDO(ITYP) * .01
       TIMWIN_l =  FWINDO(ITYP) * .01
       CALL TIMCHK(HDR(4),TIMWIN_e,TIMWIN_l,IER)
-
-!     print*,'db: sfcdta - aftr TIMCHK',hdr(4),ier              ! jaw db
-
       IF(IER.EQ.1)  THEN
          KTIMSF = KTIMSF + 1
          GO TO 2090
       END IF
 C TEST FOR OVERLAND MARINE REPORTS
-
-      if (idata(9).eq.563.or.idata(9).eq.564)                    ! jaw db
-     $ print*,'db: sfcdta - MARLND= ',MARLND                     ! jaw db
-
       IF(MARLND)  GO TO 1490
 C-----------------------------------------------------------------------
 C TEST FOR ALL SURFACE MARINE TYPES EXCEPT C-MAN, AUTOMATED TIDE
@@ -15690,9 +15657,6 @@ C ALL SURFACE TYPES EXCEPT SPLASH-LVL RPTS ARE EXPECTED TO BE IN CAT. 51
          GO TO 2090
       END IF
       ELEV = NINT(RDATA(7))
-
-!     print*,'db: sfcdta mslbog nn ityp',mslbog,nn,ityp   ! jaw db
-
       IF(MSLBOG)  THEN
 C***********************************************************************
 C                MEAN SEA-LEVEL PRESSURE BOGUS REPORT
@@ -15791,9 +15755,6 @@ C  BUT ALL OTHER MARINE REPORTS GET ELEVATION SET TO 0 IN THIS CASE
             PRINT 959, STNID,RDATA(1),RDATA(2),IDATA(9)
   959 FORMAT(' > > MARINE ELEV. MISSING -ID=',A8,', LAT=',F7.2,'N, ',
      $ 'LON=',F8.2,'E, RTYP',I4,' - ELEVATION SET TO 0.0 M')
-
-      print*,'db: sfcdta elev',elev,ityp,rdata(7),idata(30)         ! jaw db
-
             ELEV = 0.0
             HDR(10) = ELEV
          END IF
@@ -16569,7 +16530,6 @@ C$$$
       FUNCTION ISSEL(ITYPDMP)
       PARAMETER (MXWRDH = 15)
       PARAMETER (MAXOBS = 3500)
-!     INTEGER  JTYPE(31:562),IDATA(MAXOBS)                 ! jaw db
       INTEGER  JTYPE(31:564),IDATA(MAXOBS)
       real(8)  alon_8,alat_8
       CHARACTER*8  STNID,SUBSET_d
@@ -16584,19 +16544,14 @@ C      31         511 512     514       522 523       531 532  --> RTYPE
 C      --         --- ---     ---       --- ---       --- ---
      $  5, 479*30,  1,  8, 30, 11, 7*30,  2,  2, 7*30,  6,  9,
 
-C          534        540        551         561 562  --> RTYPE
-C          ---        ---        ---         --- ---
-!    $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4 /             ! jaw db
-
 C          534        540        551         561 562 563 564  --> RTYPE
 C          ---        ---        ---         --- --- --- ---
-     $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4,  4,  4 /     ! jaw db
+     $ 30,  12, 5*30,  10, 10*30,  3, 9*30,    4,  4,  4,  4 /
 
       DATA  YMISS/99998.8/
 
       ISSEL0 = 30
 
-!     IF(ITYPDMP.GT.30.AND.ITYPDMP.LT.563)  ISSEL0 = JTYPE(ITYPDMP) ! jaw db
       IF(ITYPDMP.GT.30.AND.ITYPDMP.LT.565)  ISSEL0 = JTYPE(ITYPDMP)
 
       IF(ISSEL0.EQ.3)  THEN
@@ -16684,7 +16639,8 @@ C     "TIMWIN" (+/- TIME WINDOW) ("-" PRIOR TO CYCLE TIME, "+" AFTER
 C     CYCLE TIME), ALLOWS THE 2 TO BE DIFFERENT
 C 2001-06-19  D. A. KEYSER -- NEW SUBR. "TIMCHK" DOES TIME WINDOW CHECK
 C     SEPARATE FROM "RPTLBL"
-C 2020-02-13 J. Dong -- Added to define IDSDAT
+C 2020-08-20 J. Dong -- Defined IDSDAT to eliminate Boundary Run-Time
+C     Check Failure.
 C
 C USAGE:    CALL GETSMI
 C   INPUT FILES:
@@ -17038,7 +16994,9 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
+C 2020-08-20 J. Dong -- Changed subset to subset_t. Defined subset_t
+C              and IDSDAT to eliminate Boundary Run-Time Check
+C              Failures.
 C
 C USAGE:    CALL GETSCATT(ISCTP)
 C   INPUT ARGUMENT LIST:
@@ -17424,7 +17382,9 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2020-02-13 J. Dong -- Change subset to subset_t and define subset_t and IDSDAT
+C 2020-08-20 J. Dong -- Changed subset to subset_ti. Defined subset_t
+C              and IDSDAT to eliminate Boundary Run-Time Check
+C              Failures.
 C
 C USAGE:    CALL GETGPSIPW
 C   INPUT FILES:
@@ -19833,7 +19793,8 @@ C 2017-01-11  C. Hill -- The default value for IACFTH(9) is changed from
 C             3050 to 16500 meters to provide capability to process the
 C             full vertical profile of TAMDARB reports (made available
 C             by ARINC 01/17/2017). 
-C 2019-12-02 J. Dong -- Modified to handle Hong Kong wind profiler data (NC002014).
+C 2020-08-20 J. Dong -- Modified to handle Hong Kong wind profiler data
+C            (NC002014). Future feature.
 C
 C REMARKS: THIS IS UPDATED AS NEEDED TO ACCOUNT FOR CHANGES IN COMMON
 C   BLOCKS AND FOR NEW COMMON BLOCKS AS THEY ARE ADDED.  NO PROGRAM

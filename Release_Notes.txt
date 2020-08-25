@@ -74,6 +74,7 @@ files:
    obsproc_prep/sorc/syndat_syndata.fd/syndata.f
  M obsproc_prep/sorc/build.sh
    obsproc_prep/sorc/clean.sh
+ A obsproc_prep/sorc/clobber.sh
    obsproc_prep/sorc/install.sh
  M obsproc_prep/sorc/load_libs.rc
    obsproc_prep/sorc/README.build
