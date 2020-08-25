@@ -64,7 +64,7 @@ c                           changed to print to 5 decimal places.
 c                         - Intrinsic function "ifix" replaced with "int" for cases where the
 c                           argument is now a real*8 lat or lon (else compiler error if "ifix"
 c                           operates on a real*8 argument).
-c 2020-07-29  J. Dong --
+c 2020-08-20  J. Dong --
 c                    - Modified subroutine invalid_qc to correct a
 c                      run-time error revealed when all debug options
 c                      are enabled.  When t_prcn has a missing value,

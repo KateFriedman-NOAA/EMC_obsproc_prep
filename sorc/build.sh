@@ -56,7 +56,7 @@ else
   fi # if hname starts w/ [vmp][digit]
 
   sys_tp=$(getsystem.pl -tp)
-  echo "build: running on $sys_tp"
+  echo "$lab: running on $sys_tp"
 fi # if Theia
 
 #echo "$lab: db exit" ; exit

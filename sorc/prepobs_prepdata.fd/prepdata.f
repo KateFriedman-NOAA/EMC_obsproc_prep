@@ -15254,7 +15254,7 @@ C     quality mark read from the ADPSFC dump file).
 C 2015-04-16  D. A. Keyser -- Call to subr. LNDCHK now uses new 16
 C     point check for determining if marine reports in the N.H. are
 C     over land or sea.
-C 2020-02-13 J. Dong -- Defined IDSDAT to eliminate Boundary Run-time
+C 2020-08-20 J. Dong -- Defined IDSDAT to eliminate Boundary Run-time
 C     Check Failures.
 C
 C USAGE:    CALL SFCDTA
