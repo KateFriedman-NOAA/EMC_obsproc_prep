@@ -801,7 +801,7 @@ C          512 - Fixed land surface by call letters (METAR)
 C          514 - Mobile land surface (synoptic)
 C          522 - Ship with name
 C          523 - Ship without name (report id set to "SHIP")
-C          531 - C-MAN platform
+C          531 - C-MAN platform (both TAC & BUFR data streams)
 C          532 - Tide gauge
 C          534 - Coast Guard Tide gauge
 C          540 - Mesonet surface
