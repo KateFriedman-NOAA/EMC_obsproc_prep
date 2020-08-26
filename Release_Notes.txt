@@ -214,7 +214,7 @@ files:
       v5.1.0 of obsproc_dump,
       v3.4.0 of obsproc_dump_post,
       v3.1.1 of obsproc_prep_post,
-      v2.2.0 of obsproc_shared_bufr_dumplist,
+      v2.2.0 of obsproc_shared_bufr_dumplist - previously release to support RTOFS,
       v2.1.1 of obsproc_shared_bufr_remorest.
 
    Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
