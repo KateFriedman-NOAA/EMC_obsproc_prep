@@ -1324,7 +1324,7 @@ C                 RTMA_RU where minutes here can be 15, 30 or 45.
 C 2018-07-02  S.Melchior-- In function W3FIZZ, added call to UFBINT
 C     routine to pull in HOVI (horizontal visibility) value for mesonet
 C     message types (NC255).
-C 2020-08-20 J. Dong -- Added to handle new VAD wind data reported from 
+C 2020-08-20 J. Dong --
 C     - Added changes to handle new VAD wind data reported from other
 C       countries (e.g. Europe, New Zealand) (NC002018) and Hong Kong
 C       wind profiler data (NC002014). Future feature. 
@@ -4015,7 +4015,6 @@ C CHECK TO SEE IF AIRCFT DATA SHOULD BE PROCESSED
      $      SUBSKP(004,013).AND.SUBSKP(004,103))
      $    GO TO 7001
       ELSE IF(NN.EQ.4)  THEN
-!orig    SUBSKP(005,001:090) = .TRUE.             
          SUBSKP(005,001:091) = .TRUE.
 C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
          LOOP1: DO II=1,6
