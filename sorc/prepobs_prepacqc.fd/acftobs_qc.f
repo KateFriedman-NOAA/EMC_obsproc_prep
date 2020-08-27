@@ -11400,7 +11400,7 @@ c            write(io8,*) '  itype  = ',c_insty_ob(itype(ii))
 c            write(io8,*) '  ht_ft  = ',ht_ft(ii)
 c            write(io8,*) '  ids = ',c_acftreg(ii),c_acftid(ii)
 c
-            if(ifix(t_prcn(ii)).eq.1.and.
+            if(t_prcn(ii).eq.1.and.
      $         itype(ii).eq.i_mdcrs) then
 c
               if(iob.eq.1) then

@@ -124,8 +124,8 @@ files:
         from the ADPSFC dump file.  Convert TPMI to the established TAC format,
         .DTMMXGS.
       - Change to encode HOVI reports in BUFR format from the ADPSFC dump file.
-        Convert the attribute, AOFV, of HOVI to the relationship, .REHOVI, in
-        the VISBSEQN sequence.
+        Convert the attribute, AOFV, of HOVI to the established TAC format, .REHOVI,
+        in the VISBSEQN sequence.
       - Change to encode past weather in BUFR format from the ADPSFC dump file.
         Change to read the time period or displacement, TPHR, from the past
         weather measurements.
@@ -134,6 +134,8 @@ files:
       for new report types 563-4 for BUFR-feed fixed & drifting buoys.
     - Declared variable IDSDAT throughout various routines to eliminate
       Boundary Run-Time Check Failures.
+    - In subprogram GETGPSIPW: Changed subset to subset_t.  Defined subset_t
+      to eliminate Boundary Run-Time Check Failures.
     - In subprogram PREP and BLOCK DATA:
       - Changes made to handle new VAD wind data reported from other countries
         (e.g. Europe, New Zealand) (NC002018) and Hong Kong wind profiler data
