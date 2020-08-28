@@ -17381,7 +17381,7 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2020-08-20 J. Dong -- Changed subset to subset_ti. Defined subset_t
+C 2020-08-20 J. Dong -- Changed subset to subset_t. Defined subset_t
 C              and IDSDAT to eliminate Boundary Run-Time Check
 C              Failures.
 C
