@@ -254,7 +254,7 @@
 | IALR     | 010082 | INSTANTANEOUS ALTITUDE RATE                              |
 | ELV      | 010199 | STATION ELEVATION                                        |
 | HSALG    | 007032 | HEIGHT OF SENSOR ABOVE LOCAL GROUND                      |
-| HSALGV   | 007034 | HEIGHT OF SENSOR ABOVE LOCAL GROUND FOR VISIBILITY       |
+| HSALGV   | 007193 | HEIGHT OF SENSOR ABOVE LOCAL GROUND FOR VISIBILITY       |
 |          |        |                                                          |
 | SPRR     | 021120 | SEAWINDS PROBABILITY OF RAIN (QUIKSCAT REPORTS ONLY)     |
 |          |        |                                                          |

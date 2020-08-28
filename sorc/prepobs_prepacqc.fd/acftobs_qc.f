@@ -10812,6 +10812,7 @@ c          some aircraft report 360 when they should report 180
 c modified 1/8/03 by P.M.Pauley--added check for truncated German
 c          AMDAR reports--these seem to have blank tail numbers, which
 c          the code changes to 'LH      ' (which the test looks for)
+c modified 08/21/2020 by J. Dong -- Fix float invalid error
 c
       implicit none
 c
@@ -11394,8 +11395,9 @@ c            write(io8,*) '  itype  = ',c_insty_ob(itype(ii))
 c            write(io8,*) '  ht_ft  = ',ht_ft(ii)
 c            write(io8,*) '  ids = ',c_acftreg(ii),c_acftid(ii)
 c
-            if(ifix(t_prcn(ii)*100).eq.100.and.
-     $         itype(ii).eq.i_mdcrs) then
+cdong            if(ifix(t_prcn(ii)*100).eq.100.and.
+cdong     $         itype(ii).eq.i_mdcrs) then
+            if(t_prcn(ii).eq.1.and.itype(ii).eq.i_mdcrs) then
 c
               if(iob.eq.1) then
                 iim1 = 0
