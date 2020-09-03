@@ -84,7 +84,7 @@ files:
    obsproc_prep/ush/getges_driver.sh
    obsproc_prep/ush/getges.sh
    obsproc_prep/ush/getges_sig.sh
-   obsproc_prep/ush/prepobs_glerladj.sh
+ M obsproc_prep/ush/prepobs_glerladj.sh
    obsproc_prep/ush/prepobs_makeprepbufr.sh
    obsproc_prep/ush/prepobs_oiqcbufr.sh
    obsproc_prep/ush/prepobs_prepacqc.sh
@@ -162,6 +162,12 @@ files:
                but not for production implementation.
    load_libs.rc:
     - Updated to trim obsolete IBM and Dell specific settings.
+
+
+ USH script changes:
+   prepobs_glerladj.sh:
+    - Updated to replace hard-coded alert email address with a variable, email_GLERL,
+      that is defined in, and exported from, job script: JURMA_PREP.
 
 
  Output changes:

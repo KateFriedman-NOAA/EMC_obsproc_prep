@@ -60,21 +60,21 @@ elif [ -s ${TANK}/${PDYm1}/wtxtbul/glsea-temps.dat ] ; then
     msg="WARNING: Lake temperatures for GLERL adjustment ${PDY} ${cyc}Z are \
 dated by 1 day.  Missing lake temperature file is: \
 ${TANK}/${PDY}/wtxtbul/glsea-temps.dat."
-#   echo "$msg" | mail.py -c Steven.Levine@noaa.gov
+#   echo "$msg" | mail.py -c ${email_GLERL}
     [ -n "$jlogfile" ] && $DATA/postmsg "$jlogfile" "$msg"
 elif [ -s ${TANK}/${PDYm2}/wtxtbul/glsea-temps.dat ] ; then
     export FORT11=${TANK}/${PDYm2}/wtxtbul/glsea-temps.dat
     msg="WARNING: Lake temperatures for RTMA GLERL adjustment ${PDY} ${cyc}Z \
 are dated by 2 days.  Missing lake temperature file is: \
 ${TANK}/${PDY}/wtxtbul/glsea-temps.dat."
-    echo "$msg" | mail.py -c Steven.Levine@noaa.gov
+    echo "$msg" | mail.py -c ${email_GLERL}
     [ -n "$jlogfile" ] && $DATA/postmsg "$jlogfile" "$msg"
 elif [ -s ${TANK}/${PDYm3}/wtxtbul/glsea-temps.dat ] ; then
     export FORT11=${TANK}/${PDYm3}/wtxtbul/glsea-temps.dat
     msg="WARNING: Lake temperatures for RTMA GLERL adjustment ${PDY} ${cyc}Z \
 are dated by 3 days.  Missing lake temperature file is: \
 ${TANK}/${PDY}/wtxtbul/glsea-temps.dat."
-    echo "$msg" | mail.py -c Steven.Levine@noaa.gov
+    echo "$msg" | mail.py -c ${email_GLERL}
     [ -n "$jlogfile" ] && $DATA/postmsg "$jlogfile" "$msg"
 
 #elif [ -s ${TANK}/${PDYm4}/wtxtbul/glsea-temps.dat ] ; then
@@ -110,7 +110,7 @@ GLERL-adjusted obs."
     msg="prepobs_glerladj.sh ERROR: Lake temperature file glsea-temps.dat \
 valid for ${PDY} is more than 3 days old, missing lake temperature file is: \
 ${TANK}/${PDY}/wtxtbul/glsea-temps.dat --> non-fatal"
-    echo $msg | mail.py -c Steven.Levine@noaa.gov
+    echo $msg | mail.py -c ${email_GLERL}
     [ -n "$jlogfile" ] && $DATA/postmsg "$jlogfile" "$msg"
     exit 0
 fi
