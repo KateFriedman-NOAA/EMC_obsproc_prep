@@ -49,7 +49,7 @@ else
     unset FORT00 `env | grep "^FORT[0-9]\{1,\}=" | awk -F= '{print $1}'`
 fi
     #confirm existance of Lake temperature file
-    #file size should be 18202 byptes
+    #file size should be 18202 bytes
     #if file not available for current date, look back up to 3 days
          #per advice from John Kelley, job should not run if lake temps are
          # more than 3 days old.
