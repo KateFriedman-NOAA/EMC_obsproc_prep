@@ -1324,7 +1324,7 @@ C                 RTMA_RU where minutes here can be 15, 30 or 45.
 C 2018-07-02  S.Melchior-- In function W3FIZZ, added call to UFBINT
 C     routine to pull in HOVI (horizontal visibility) value for mesonet
 C     message types (NC255).
-C 2020-08-20 J. Dong --
+C 2020-08-20  J. Dong --
 C     - Added changes to handle new VAD wind data reported from other
 C       countries (e.g. Europe, New Zealand) (NC002018) and Hong Kong
 C       wind profiler data (NC002014). Future feature. 
@@ -1332,6 +1332,9 @@ C     - Added logic to differentiate between these and existing Radar
 C       Coded Message (RCM) VAD wind reports via use of report subtype
 C       (TSB=1 for RCM, =2 for Level 2 and =3 for other vadwnd). Future
 C       feature.
+C 2020-09-14  S. Melchior -- In subroutine PREP, added ability to
+C       process new WMO BUFR sequence Meteosat AMV data from subsets:
+C       005067, 005068, 005069. 
 C
 C
 C USAGE:
@@ -3826,6 +3829,8 @@ C       (TSB=1 for RCM, =2 for Level 2 and =3 for other vadwnd). Future
 C       feature.
 C     - Changed subset to subset_t.  Defined subset_t and IDSDAT to 
 C       eliminate Boundary Run-Time Check Failures.
+C 2020-09-14 S. Melchior -- Added subsets 005067, 005068, and 005069
+C       to the processing to read in Meteosat AMV data.
 C
 C USAGE:    CALL PREP
 C   INPUT FILES:
@@ -4117,7 +4122,8 @@ C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
             LOOP8n1: DO JJ=5,6
                IF(MIN(JSWIND(II,JJ,1),JSMASS(II,JJ,1)).LT.9999)  THEN
               ! ** METEOSAT-ODD AND METEOSAT-EVEN Infrared (long-wave)**
-                  SUBSKP(005,064) = .FALSE. ! current
+                  SUBSKP(005,067) = .FALSE. ! current
+                  SUBSKP(005,064) = .FALSE. ! historical
                   SUBSKP(005,061) = .FALSE. ! historical
                   EXIT LOOP8
                END IF
@@ -4127,7 +4133,8 @@ C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
             LOOP9n1: DO JJ=5,6
                IF(MIN(JSWIND(II,JJ,3),JSMASS(II,JJ,3)).LT.9999)  THEN
                    ! ** METEOSAT-ODD AND METEOSAT-EVEN Visible **
-                  SUBSKP(005,065) = .FALSE. ! current
+                  SUBSKP(005,068) = .FALSE. ! current
+                  SUBSKP(005,065) = .FALSE. ! historical
                   SUBSKP(005,062) = .FALSE. ! historical
                   EXIT LOOP9
                END IF
@@ -4137,7 +4144,8 @@ C CHECK TO SEE IF ANY BUFR MESSAGES CAN BE SKIPPED IN INPUT SATWND DUMP
             LOOP10n1: DO JJ=5,6
                IF(MIN(JSWIND(II,JJ,2),JSMASS(II,JJ,2)).LT.9999)  THEN
                    ! ** METEOSAT-ODD AND METEOSAT-EVEN Water Vpr Imgr **
-                  SUBSKP(005,066) = .FALSE. ! current
+                  SUBSKP(005,069) = .FALSE. ! current
+                  SUBSKP(005,066) = .FALSE. ! historical
                   SUBSKP(005,063) = .FALSE. ! historical
                   EXIT LOOP10
                END IF
@@ -4300,7 +4308,8 @@ C IFLAG = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
                   PRINT 8872, NAME1,(SWINDO_e(I,4,2),I=1,6),
      $             (SWINDO_l(I,4,2),I=1,6)
                END IF
-               IF(.NOT.SUBSKP(005,061).OR..NOT.SUBSKP(005,064))  THEN
+               IF(.NOT.SUBSKP(005,061).OR..NOT.SUBSKP(005,064).OR.
+     $            .NOT.SUBSKP(006,067))  THEN
                NAME1 = 'ESA: METEOSAT-ODD CL DRIFT -IR-LW (6 LAT BANDS)'
                   PRINT 8872, NAME1,(SWINDO_e(I,5,1),I=1,6),
      $             (SWINDO_l(I,5,1),I=1,6)
@@ -4308,7 +4317,8 @@ C IFLAG = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
                   PRINT 8872, NAME1,(SWINDO_e(I,6,1),I=1,6),
      $             (SWINDO_l(I,6,1),I=1,6)
                END IF
-               IF(.NOT.SUBSKP(005,062).OR..NOT.SUBSKP(005,065))  THEN
+               IF(.NOT.SUBSKP(005,062).OR..NOT.SUBSKP(005,065).OR.
+     $            .NOT.SUBSKP(005,068))  THEN
                NAME1 = 'ESA: METEOSAT-ODD CLOUD DRIFT-VIS (6 LAT BANDS)'
                   PRINT 8872, NAME1,(SWINDO_e(I,5,3),I=1,6),
      $             (SWINDO_l(I,5,3),I=1,6)
@@ -4316,7 +4326,8 @@ C IFLAG = 1 RETURNS DATA SET INFO (ONLY) AFTER FIRST CALL
                   PRINT 8872, NAME1,(SWINDO_e(I,6,3),I=1,6),
      $             (SWINDO_l(I,6,3),I=1,6)
                END IF
-               IF(.NOT.SUBSKP(005,063).OR..NOT.SUBSKP(005,066))  THEN
+               IF(.NOT.SUBSKP(005,063).OR..NOT.SUBSKP(005,066).OR.
+     $            .NOT.SUBSKP(005,069))  THEN
                NAME1 = 'ESA: METEOSAT-ODD CLOUD DRFT-WVPR (6 LAT BANDS)'
                   PRINT 8872, NAME1,(SWINDO_e(I,5,2),I=1,6),
      $             (SWINDO_l(I,5,2),I=1,6)
@@ -17381,7 +17392,7 @@ C              45 (since the RTMA_RU runs 4 times per hour). This change
 C              allows the print statements to reflect this new center
 C              dump time format.  It also ensures that the dump vs.
 C              PREPBUFR center dates are correctly tested.
-C 2020-08-20 J. Dong -- Changed subset to subset_t. Defined subset_t
+C 2020-08-20 J. Dong -- Changed subset to subset_ti. Defined subset_t
 C              and IDSDAT to eliminate Boundary Run-Time Check
 C              Failures.
 C

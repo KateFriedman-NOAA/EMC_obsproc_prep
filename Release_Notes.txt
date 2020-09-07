@@ -129,6 +129,9 @@ files:
       - Change to encode past weather in BUFR format from the ADPSFC dump file.
         Change to read the time period or displacement, TPHR, from the past
         weather measurements.
+    - In function R06UBF:
+      - Change to process new WMO BUFR sequence Meteosat AMV data from subsets:
+        005067, 005068, 005069.
    prepobs_prepdata.fd/prepdata.f
     - In function ISSEL(), expanded JTYPE array & logic to include values
       for new report types 563-4 for BUFR-feed fixed & drifting buoys.
@@ -144,6 +147,8 @@ files:
         Message (RCM) VAD wind reports via use of report subtype 
         (TSB=1 for RCM, =2 for Level 2 and =3 for other vadwnd).
         BENEFIT: Code is in place to handle future data streams.
+      - Code added to process new WMO BUFR sequence Meteosat AMV data from
+        subsets: 005067, 005068, 005069.
    prepobs_prepdata.fd/w3unpkb7.f
     - Declared variable IDSDAT as 8-byte integer.
     - Added processing to encode newly available VAD winds from Europe

@@ -515,6 +515,10 @@ C       RELATIONSHIP (.REHOVI) IN VISBSEQN SEQUENCE.
 C     - ADDED ABILITY TO ENCODE PAST WEATHER IN BUFR FORMAT FROM THE
 C       ADPSFC DUMP FILE. ADDED TO READ THE TIME PERIOD OR DISPLACEMENT
 C       (TPHR) FOR THE PAST WEATHER MEASUREMENTS.
+C 2020-09-14  S. Melchior -- In function R06UBF, added code to process
+C       new WMO BUFR format Meteosat AMV data from subsets: 005067,
+C       005068, 005069. 
+C       
 C
 C
 C USAGE:    II = IW3UNPBF(NUNIT, OBS, STNID, CRES1, CRES2, CBULL, OBS2,
@@ -5423,7 +5427,7 @@ C     ---> PROCESSES SATWIND DATA (005/*)
      $ KNTavhrr(3:224),KNTviirs(224:225),IFLSAT,knts16(270:274)
       COMMON/IUBFLL/Q81(255),Q82(255)
  
-      CHARACTER*80 HDSTR,LVSTR,QMSTR,RCSTR
+      CHARACTER*80 HDSTR,HDSTR2,LVSTR,QMSTR,RCSTR
       CHARACTER*8  SUBSET,SID,RSV1,RSV2
       CHARACTER*1  CSAT(499),CPROD(0:4),CPRDF(0:2),CPRDFN(51),C8(10)
       INTEGER      IPRDF(0:2),ISWCM(5,9:10,2),ITP_C8(10),ISWDL(7)
@@ -5437,6 +5441,7 @@ C     ---> PROCESSES SATWIND DATA (005/*)
       SAVE
 
       DATA HDSTR/'RPID CLON CLAT HOUR MINU SAID               '/
+      DATA HDSTR2/'RPID CLONH CLATH HOUR MINU SAID            '/
       DATA LVSTR/'TMDP TMDB CCST                              '/
       DATA RCSTR/'RCHR RCMI RCTS                              '/
       DATA IMISS/99999/,XMISS/99999./
@@ -5573,6 +5578,9 @@ C   they have high-res lat/lon
 C  -------------------------------------------------------------------
          call ufbint(lunit,hdr_8,20,1,iret,
      $              'NUL CLONH CLATH HOUR MINU SAID');hdr(2:)=hdr_8(2:)
+      else if(subset(7:8).eq.'67'.or.subset(7:8).eq.'68'.or.
+     $        subset(7:8).eq.'69') then
+         CALL UFBINT(LUNIT,HDR_8,20,1,IRET,HDSTR2);HDR(2:)=HDR_8(2:)
       else
          CALL UFBINT(LUNIT,HDR_8,20,1,IRET,HDSTR);HDR(2:)=HDR_8(2:)
       end if
@@ -6087,12 +6095,12 @@ CVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
      $   SUBSET(7:8).EQ.'14'                           .OR.
      $   (SUBSET(7:8).GE.'15'.AND.SUBSET(7:8).LE.'19') .OR.
      $   (SUBSET(7:8).GE.'44'.AND.SUBSET(7:8).LE.'46') .OR.
-     $   (SUBSET(7:8).GE.'64'.AND.SUBSET(7:8).LE.'66') .OR.
+     $   (SUBSET(7:8).GE.'67'.AND.SUBSET(7:8).LE.'69') .OR.
      $   (SUBSET(7:8).GE.'70'.AND.SUBSET(7:8).LE.'71') .OR.
      $   (SUBSET(7:8).EQ.'80') .OR.
      $   (SUBSET(7:8).EQ.'90')) THEN
 
-         IF(SUBSET(7:8).GE.'64'.AND.SUBSET(7:8).LE.'66') THEN !EUMETSAT
+         IF(SUBSET(7:8).GE.'67'.AND.SUBSET(7:8).LE.'69') THEN !EUMETSAT
             INDX  =   1
             IOFF  =   0
             IVARS =   4 ! number of variables w/ quality info
