@@ -223,7 +223,12 @@ files:
    This must be implemented on Dell-p3 & Cray.
 
    This must be implemented simultaneously with the implementations of:
+      v4.2.0 of decod_dcelrw,
+      v2.5.2 of obsproc_cdas,
       v3.3.0 of obsproc_global,
+      v3.3.1 of obsproc_rtma,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
       v5.1.0 of obsproc_dump,
       v3.4.0 of obsproc_dump_post,
       v3.1.1 of obsproc_prep_post,
