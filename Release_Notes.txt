@@ -165,8 +165,12 @@ files:
       BENEFIT: allows for easier invocation of extended compiler
                options that should be applied during development
                but not for production implementation.
+    - added ability to build on Hera super computer.
+      BENEFIT: downstream users can compile and run on the R&D 
+               platform.
    load_libs.rc:
     - Updated to trim obsolete IBM and Dell specific settings.
+    - Updated to add Hera (R&D) specific settings.
 
 
  USH script changes:
