@@ -34,6 +34,8 @@ set -e    # fail if an error is hit so that errors do not go unnoticed
 if [[ "$SITE" =~ (theia|THEIA) ]]; then
   sys_tp=Cray-CS400
   . /apps/lmod/lmod/init/sh     # may be needed for some users
+elif [[ "$SITE" =~ (hera|HERA) ]]; then
+  sys_tp=HERA
 else
   ##  determine system/phase
 
@@ -80,6 +82,10 @@ case $sys_tp in
  Dell-p3)
    module load ips/18.0.5.274    # req'd for bufr
    module load impi/18.0.1       # req'd for w3emc
+   ;;
+ HERA)
+   module load intel/18.0.5.274
+   module load impi/2019.0.4
    ;;
  *) echo "$lab: unexpected system.  Update for $sys_tp";
     echo "$lab: exiting" ; exit ;;
