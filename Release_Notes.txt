@@ -230,13 +230,14 @@ files:
       v4.2.0 of decod_dcelrw,
       v2.5.2 of obsproc_cdas,
       v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
       v3.3.1 of obsproc_rtma,
       v3.2.1 of obsproc_urma,
       v2.4.0 of obsproc_dump_monitor,
       v5.1.0 of obsproc_dump,
       v3.4.0 of obsproc_dump_post,
       v3.1.1 of obsproc_prep_post,
-      v2.2.0 of obsproc_shared_bufr_dumplist - previously release to support RTOFS,
+      v2.2.0 of obsproc_shared_bufr_dumplist - previously released to support RTOFS,
       v2.1.1 of obsproc_shared_bufr_remorest.
 
    Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
