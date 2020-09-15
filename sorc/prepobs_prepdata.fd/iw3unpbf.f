@@ -6095,12 +6095,12 @@ CVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
      $   SUBSET(7:8).EQ.'14'                           .OR.
      $   (SUBSET(7:8).GE.'15'.AND.SUBSET(7:8).LE.'19') .OR.
      $   (SUBSET(7:8).GE.'44'.AND.SUBSET(7:8).LE.'46') .OR.
-     $   (SUBSET(7:8).GE.'67'.AND.SUBSET(7:8).LE.'69') .OR.
+     $   (SUBSET(7:8).GE.'64'.AND.SUBSET(7:8).LE.'69') .OR.
      $   (SUBSET(7:8).GE.'70'.AND.SUBSET(7:8).LE.'71') .OR.
      $   (SUBSET(7:8).EQ.'80') .OR.
      $   (SUBSET(7:8).EQ.'90')) THEN
 
-         IF(SUBSET(7:8).GE.'67'.AND.SUBSET(7:8).LE.'69') THEN !EUMETSAT
+         IF(SUBSET(7:8).GE.'64'.AND.SUBSET(7:8).LE.'69') THEN !EUMETSAT
             INDX  =   1
             IOFF  =   0
             IVARS =   4 ! number of variables w/ quality info
