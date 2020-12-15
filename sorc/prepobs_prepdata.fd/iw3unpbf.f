@@ -518,6 +518,9 @@ C       (TPHR) FOR THE PAST WEATHER MEASUREMENTS.
 C 2020-09-14  S. Melchior -- In function R06UBF, added code to process
 C       new WMO BUFR format Meteosat AMV data from subsets: 005067,
 C       005068, 005069. 
+c 2020-10-15 JWhiting -- added trap to pull dump mnemonics specific to 
+c       BUFR feed buoy data streams so as to properly encode prepbufr 
+c       wave height & frequecy mnemonics (HOWV POWV).  
 C       
 C
 C
@@ -1326,6 +1329,8 @@ C$$$
       data istart/3,200,223/,iend/5,209,223/
 
       IF(ITIMES.EQ.0)  THEN
+
+        PRINT'(" ===> IW3UNPBF - WCOSS VERSION: 10-15-2020")'
 
 C  THE FIRST TIME IN, INITIALIZE SOME DATA
 C  (NOTE: FORTRAN 77/90 STANDARD DOES NOT ALLOW COMMON BLOCK VARIABLES
@@ -3856,7 +3861,13 @@ C DBUOYs store sub-sfc temp, use 1st lvl if SST1 msg (unless > 10m down)
          CALL UFBINT(LUNIT,OBS2_8( 8),8,1,IRET,
      $                'HOVI VTVI PSW1 PSW2 PKWDSP PKWDDR .DTMMXGS MXGS')
          CALL UFBINT(LUNIT,OBS2_8(23),4,1,IRET,'TOCC HBLCS XS10 XS20')
-         CALL UFBINT(LUNIT,OBS2_8(32),4,1,IRET,'HOWV POWV HOWW POWW')
+
+         if(subset(6:8).eq.'102'.or.subset(6:8).eq.'103') then ! BUFR buoys
+           CALL UFBINT(LUNIT,OBS2_8(32),2,1,IRET,'SGWH AVWP')
+         else ! TAC reports
+           CALL UFBINT(LUNIT,OBS2_8(32),4,1,IRET,'HOWV POWV HOWW POWW')
+         endif ! not 102 103
+
          CALL UFBINT(LUNIT,OBS2_8(36),5,1,IRET,
      $    'TDMP ASMP CHPT 3HPC 24PC')
          CALL UFBINT(LUNIT,OBS3_8(1,1,2),5,255,IRET,'PRWE')
