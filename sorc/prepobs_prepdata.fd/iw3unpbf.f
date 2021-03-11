@@ -818,7 +818,6 @@ C          524 - FM94/BUFR format Ship with name
 C          525 - FM94/BUFR format Ship w/o name (rpt id set to "SHIP")
 C          530 - C-MAN platform (BUFR-feed data stream)
 C          531 - C-MAN platform (TAC-feed data stream)
-C          532 - Tide gauge
 C          534 - Coast Guard Tide gauge
 C          540 - Mesonet surface
 C          551 - Sea-level pressure bogus
