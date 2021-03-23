@@ -202,6 +202,10 @@ C                 NDATMX have been now been greatly increased).
 C 2020-01-09  J. Dong -- In subroutine EDTPRP, changed the windowing
 C        decade from 20 to 40 for cases when the year is represented
 C        by 2 digits instead of 4. 
+C 2020-10-09  X. Wu -- In subroutine EDTPRP, the distance threshold for
+C        inner core dropsonde data reduced to 55km. A 32 m/s wind 
+C        threshold was added.  This allows for more inner core data to
+C        be assimilated in GFSv16.     
 C
 C
 C USAGE:
@@ -547,7 +551,7 @@ C                    WIND ARE CREATED)
 
 C  PRESET AND UPDATE SOME OPTIONS AND READ IN DATE/TIME
 
-      CALL W3TAGB('SYNDAT_SYNDATA',2020,0009,1200,'NP22')
+      CALL W3TAGB('SYNDAT_SYNDATA',2020,0283,1200,'NP22')
 
       MWAVEZ   = MWAVE
       PTOPAZ   = PTOPAL
@@ -29122,7 +29126,8 @@ cc   $       'limit for flagging is ',MAX(111.,3*RMW(J))
 cc          print *, 'RLON(J),STMLAT(J),XOB,YOB: ',
 cc   $                RLON(J),STMLAT(J),XOB,YOB
 cppppppppppppppp
-               IF(RDIST.LE.(MAX(111.,3*RMW(J))))  GO TO 1600
+C              IF(RDIST.LE.(MAX(111.,3*RMW(J))))  GO TO 1600
+               IF((vmax(j) .GE. 32.) .AND. (RDIST .LE. 55.)) GO TO 1600
             ENDDO
             GO TO 15
  1600       CONTINUE

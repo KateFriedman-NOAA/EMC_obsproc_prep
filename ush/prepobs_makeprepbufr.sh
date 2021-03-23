@@ -278,6 +278,10 @@
 #        BENEFIT: Only one version of the file needs to be maintained.
 # 2018-08-16  S. Melchior -- Modified to run on Dell-p3 as well as Cray-XC40
 #        and IBM iDataPlex.
+# 2020-02-26  S. Melchior -- removed references to $NWROOTp1; no longer relevant
+#        with the decommissioning of IBM ph1/ph2.
+# 2020-10-09  S. Melchior -- Modified to accommodate new variable NETCDF_IN.
+#        If .true., processing will obtain the NetCDF format first guess fields.
 # 
 #
 #
@@ -356,6 +360,9 @@
 #                   A failed attempt results in an empty string.
 #     NEMSIO_IN     Flag that if ".true." indicates that nemsio atmospheric 
 #                   background fields will be input rather than sigio.
+#                   Default is ""
+#     NETCDF_IN     Flag that if ".true." indicates that netcdf atmospheric
+#                   background fields will be input rather than sigio or nemsio
 #                   Default is ""
 #     SENDDBN       String indicating whether or not to alert an output file to
 #                   the NWS/TOC (= "YES" - invoke alert; anything else - do not
@@ -447,7 +454,7 @@
 #                   Default is "${HOMEobsproc_prep}/fix"
 #     DICTPREP      String indicating directory path for PREPOBS dictionary
 #                   files
-#                   Default is "${NWROOTp1}/decoders/decod_shared/dictionaries"
+#                   Default is "${NWROOT}/decoders/decod_shared/dictionaries"
 #     EXECSYND      String indicating directory path for SYNTHETIC data
 #                   executables
 #                   Default is "${HOMEobsproc_prep}/exec"
@@ -702,9 +709,12 @@
 #                   script and GETGES driver script.
 #                   Default is $HOMEobsproc_prep/ush.
 #
-#     GETGESprep    GETGES utility script. If NEMSIO_IN=.true.,  defaults to:
-#                       $USHGETGES/getges.sh (and is executed by
-#                                             $GETGESprep_driver, see below)
+#     GETGESprep    GETGES utility script. 
+#                   If NETCDF_IN=.true.,  defaults to:
+#                       $USHGETGES/getges_nc.sh
+#                   If NEMSIO_IN=.true.,  defaults to:
+#                       $USHGETGES/getges.sh 
+#                     (either option above is executed by $GETGESprep_driver, see below)
 #                   otherwise, defaults to:
 #                       $USHGETGES/getges_sig.sh
 #
@@ -732,12 +742,13 @@
 #                   date for the PREPBUFR processing <mm> (if set in script)
 #     SGES          Either ...
 #                    1) String indicating the full path name for global
-#                       sigio-based or nemsio-based guess file valid at the
-#                       center PREPBUFR processing date/time (in which case the
-#                       center PREPBUFR processing date/time is a multiple of
-#                       3-hrs, or for any PREPBUFR center hour if global guess
-#                       is nemsio-based)  - This guess file will be encoded
-#                       into the PREPBUFR file for use by the q.c. programs.
+#                       sigio-based, nemsio-based, or NetCDF-based guess file
+#                       valid at the center PREPBUFR processing date/time (in
+#                       which case the center PREPBUFR processing date/time is
+#                       a multiple of 3-hrs, or for any PREPBUFR center hour if
+#                       global guess is nemsio-based or NetCDF-based)  - This
+#                       guess file will be encoded into the PREPBUFR file for
+#                       use by the q.c. programs.
 #                             -- or --
 #                    2) String indicating the full path name for the global
 #                       atmosperic guess file valid at the nearest cycle time
@@ -757,7 +768,7 @@
 #                             expects that sigio-based guess files will only
 #                             have valid hours which are a multiple of 3
 #                     NOTE 3: Only case 1 above is valid when global guess is
-#                             nemsio-based.
+#                             nemsio-based or NetCDF-based.
 #     SGESA         Either ...
 #                    1) String set to "/dev/null" for case 1 of SGES above
 #                       (default)
@@ -781,7 +792,7 @@
 #                             expects that sigio-based guess files will only
 #                             have valid hours which are a multiple of 3
 #                     NOTE 3: Only case 1 above is valid when global guess is
-#                             nemsio-based.
+#                             nemsio-based or NetCDF-based.
 #   
 #
 #   Modules and files referenced:
@@ -857,6 +868,7 @@
 set -aux
 
 NEMSIO_IN=${NEMSIO_IN:=""}
+NETCDF_IN=${NETCDF_IN:=""}
 jlogfile=${jlogfile:=""}
 SENDDBN=${SENDDBN:-NO}
 
@@ -976,7 +988,7 @@ envir_getges=${envir_getges:-$envir}
 if [ $NET = cfs ]; then 
    network_getges=${network_getges:-"cfs-cdas"}
 else
-  if [ $modhr -eq 0 -o "$NEMSIO_IN" = .true. ]; then
+  if [ $modhr -eq 0 -o "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then
      network_getges=${network_getges:-global}
   else
      network_getges=${network_getges:-gfs}
@@ -1075,6 +1087,9 @@ if [ "$GETGUESS" = 'YES' ]; then
    if [ "$NEMSIO_IN" = .true. ]; then
       GETGESprep_driver=${GETGESprep_driver:-$USHGETGES/getges_driver.sh}
       GETGESprep=${GETGESprep:-$USHGETGES/getges.sh}
+   elif [ "$NETCDF_IN" = .true. ]; then
+      GETGESprep_driver=${GETGESprep_driver:-$USHGETGES/getges_driver.sh}
+      GETGESprep=${GETGESprep:-$USHGETGES/getges_nc.sh}
    else
       GETGESprep=${GETGESprep:-$USHGETGES/getges_sig.sh}
    fi
@@ -1192,7 +1207,7 @@ if [ "$RELOCATION_HAS_RUN" != 'YES' -a "$GETGUESS" != 'NO' ]; then
 
    if [ "$RUN" = 'gfs' -o "$RUN" = 'gdas' ]; then
       for ihr in -3 +3 ;do
-         if [ "$NEMSIO_IN" = .true. ]; then 
+         if [ "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then 
            if [ $ihr = "-3" ] ; then
               sges=sgm3prep
               stype=natgm3
@@ -1224,7 +1239,7 @@ echo "                     PREPBUFR processing date/time"
 echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
             echo
             set -x
-            if [ "$NEMSIO_IN" = .true. ]; then
+            if [ "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then
                $GETGESprep_driver
                errges=$?
             else
@@ -1268,9 +1283,9 @@ elif [ "$RELOCATION_HAS_RUN" = 'YES' ]; then
    for file in sgm3prep sgesprep sgp3prep tcvitals.relocate.$tmmark; do
       case $file in
         tcvitals.relocate.$tmmark) infile=$file; qual_last="";; #  already has $tmmark at end
-        sgm3prep) if [ "$NEMSIO_IN" = .true. ];then infile=atmgm3.nemsio;else infile=$file;fi;;
-        sgesprep) if [ "$NEMSIO_IN" = .true. ];then infile=atmges.nemsio;else infile=$file;fi;;
-        sgp3prep) if [ "$NEMSIO_IN" = .true. ];then infile=atmgp3.nemsio;else infile=$file;fi;;
+        sgm3prep) if [ "$NEMSIO_IN" = .true. ];then infile=atmgm3.nemsio;elif [ "$NETCDF_IN" = .true. ];then infile=atmgm3.nc;else infile=$file;fi;;
+        sgesprep) if [ "$NEMSIO_IN" = .true. ];then infile=atmges.nemsio;elif [ "$NETCDF_IN" = .true. ];then infile=atmges.nc;else infile=$file;fi;;
+        sgp3prep) if [ "$NEMSIO_IN" = .true. ];then infile=atmgp3.nemsio;elif [ "$NETCDF_IN" = .true. ];then infile=atmgp3.nc;else infile=$file;fi;;
       esac
       if [ -s ${tstsp}${infile}${qual_last} ]; then
          cp ${tstsp}${infile}${qual_last} $file
@@ -1347,14 +1362,14 @@ if [ "$PREPDATA" = 'YES' -o "$SYNDATA" = 'YES' -o "$PREVENTS" = 'YES' ]; then
    if [ "$GETGUESS" != 'NO' ]; then
 
 #  Either ...
-#    If the global background guess will be nemsio-based -OR- if the global
-#    background guess will be sigio-based and the center PREPBUFR processing
-#    date/time is a multiple of 3-hrs, then get a global atmospheric guess valid
-#    at the center PREPBUFR processing date/time - this will be interpolated to
-#    observation locations by PREPDATA and encoded into the PREPBUFR file for
-#    use by the q.c. programs; if a non-zero length file sgesprep exists in the
-#    working directory, then this guess is used - otherwise: the GETGES utility
-#    is executed to obtain the global atmospheric guess file here
+#    If the global background guess will be nemsio-based or NetCDF-based -OR- if
+#    the global background guess will be sigio-based and the center PREPBUFR
+#    processing date/time is a multiple of 3-hrs, then get a global atmospheric
+#    buess valid at the center PREPBUFR processing date/time - this will be
+#    interpolated to observation locations by PREPDATA and encoded into the
+#    PREPBUFR file for use by the q.c. programs; if a non-zero length file sgesprep
+#    exists in the working directory, then this guess is used - otherwise: the
+#    GETGES utility is executed to obtain the global atmospheric guess file here
 #
 #    (NOTE 1: a pre-existing sgesprep file in the working directory at this
 #             point was either:
@@ -1414,23 +1429,23 @@ if [ "$PREPDATA" = 'YES' -o "$SYNDATA" = 'YES' -o "$PREVENTS" = 'YES' ]; then
       for sfx in "" A; do
          if [ ! -s sgesprep${sfx} ]; then
             fhr=any
-            if [ "$NEMSIO_IN" = .true. ]; then 
+            if [ "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then 
                dhr=0
                stype=natges
             else
                dhr=`expr 0 - $modhr`
                stype=sigges
             fi
-            if [ $modhr -eq 0 -o "$NEMSIO_IN" = .true. ]; then
+            if [ $modhr -eq 0 -o "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then
                [ "$sfx" = 'A' ]  &&  break
                set +x
                echo
 echo "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
 echo "  Either center PREPBUFR processing date/time is a multiple of 3-hrs"
 echo "                                -OR-"
-echo "                     global guess is nemsio-based"
-echo "   Use GETGES to get global sigio-based or nemsio-based GUESS valid for"
-echo "             0 hrs relative to center PREPBUFR processing date/time"
+echo "            global guess is nemsio-based or NetCDF-based"
+echo "   Use GETGES to get global sigio-based, nemsio-based, or NetCDF-based"
+echo "  GUESS valid for 0 hrs relative to center PREPBUFR processing date/time"
 echo "     Will be encoded into PREPBUFR file and used by q.c. programs"
 echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                echo
@@ -1458,7 +1473,7 @@ echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                echo
                set -x
             fi
-            if [ "$NEMSIO_IN" = .true. ]; then
+            if [ "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then
                $GETGESprep_driver
                errges=$?
             else
@@ -1468,15 +1483,17 @@ echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
             fi
             if test $errges -ne 0
             then
-#  problem obtaining global sigio-based or nemsio-based guess - exit if center
+#  problem obtaining global sigio-based, nemsio-based, or NetCDF-based guess - exit if center
 #   PREPBUFR processing date/time is a multiple of 3-hrs or if global guess is
-#   nemsio-based, otherwise continue running but set GETGUESS=NO meaning a
+#   nemsio-based or NetCDF-based, otherwise continue running but set GETGUESS=NO meaning a
 #   first guess will NOT be encoded in PREPBUFR file
-               if [ $modhr -eq 0  -o "$NEMSIO_IN" = .true. ]; then
+               if [ $modhr -eq 0  -o "$NEMSIO_IN" = .true. -o "$NETCDF_IN" = .true. ]; then
                   if [ "$NEMSIO_IN" = .true. ]; then
                      set +x
                      echo
-echo "problem obtaining global nemsio-based guess;"
+echo "problem obtaining global nemsio-based or NetCDF-based guess;"
+                  elif [ "$NETCDF_IN" = .true. ]; then
+echo "problem obtaining global netCDF-based guess;"
                   else
                      set +x
                      echo
@@ -1536,6 +1553,8 @@ echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                [ $RUN = gfs -o $RUN = gdas ]  &&  qual_last=""
                if [ "$NEMSIO_IN" = .true. ]; then 
                   gesbase="atmges.nemsio"
+                elif [ "$NETCDF_IN" = .true. ]; then
+                  gesbase="atmges.nc"
                 else
                   gesbase="sgesprep"
                fi
@@ -1664,8 +1683,8 @@ echo
 #   and span the center PREPBUFR processing date/time which is NOT a multiple of
 #   3-hrs are available and valid at this point
 #                                 -- or --
-#   a global nemsio-based guess file valid at the center PREPBUFR processing
-#   date/time for any hour is valid at this point
+#   a global nemsio-based or NetCDF-based guess file valid at the center PREPBUFR
+#   processing date/time for any hour is valid at this point
 
 #  In any case, namelist "GBLEVN" with PREVEN=T is cat'ed to the beginning
 #  of the PREPOBS_PREPDATA program data cards file - this means
@@ -1764,10 +1783,10 @@ cat <<\EOFmpp > MP_PREPDATA
 #   MPCOPYX  - path to PREPOBS_MPCOPYBUFR program executable
 #   PRPT     - path to PREPOBS_PREPDATA bufrtable file
 #   LANDC    - path to land/sea mask file
-#   SGES     - path to COPY OF global sigio-based or nemsio-based first guess
-#               file valid at either center PREPBUFR processing date/time or,
-#               for global sigio-based guess only, nearest 3-hrly cycle time
-#               prior to center PREPBUFR processing date/time
+#   SGES     - path to COPY OF global sigio-based, nemsio-based, or NetCDF-based
+#               first guess file valid at either center PREPBUFR processing
+#               date/time or, for global sigio-based guess only, nearest 3-hrly
+#               cycle time prior to center PREPBUFR processing date/time
 #   SGESA    - path to COPY OF global sigio-based guess file valid at nearest
 #               3-hrly cycle AFTER center PREPBUFR processing date/time (if
 #               needed, otherwise /dev/null). Only used if SGES is valid at
@@ -1906,9 +1925,9 @@ export FORT15=$LANDC
 
 # The PREPOBS_PREPDATA code opens GFS spectral coefficient guess files using 
 # sigio routines or GFS gaussian grid guess files using nemsio routines (via
-# W3EMC routine GBLEVENTS) in a manner that may not recognize the FORTxx
-# variables above.  So, the above statements setting FORTxx vars for $SGES and
-# $SGESA are replaced by the soft links below.
+# W3EMC routine GBLEVENTS) or NetCDF routines in a manner that may not recognize
+# the FORTxx variables above.  So, the above statements setting FORTxx vars for
+# $SGES and $SGESA are replaced by the soft links below.
 
 ln -sf $SGES              fort.18
 ln -sf $SGESA             fort.19
