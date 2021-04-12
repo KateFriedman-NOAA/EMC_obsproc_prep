@@ -6,7 +6,7 @@
 # Script name:         prepobs_makeprepbufr.sh
 # Script description:  Prepares & quality controls PREPBUFR file
 #
-# Author:       Keyser              Org: EMC          Date: 2018-03-05
+# Author:       Keyser              Org: EMC          Date: 2021-04-05
 #
 # Abstract: This script creates the PREPBUFR file containing observational data
 #   assimilated by all versions of NCEP atmospheric analyses.  It points to BUFR
@@ -282,6 +282,8 @@
 #        with the decommissioning of IBM ph1/ph2.
 # 2020-10-09  S. Melchior -- Modified to accommodate new variable NETCDF_IN.
 #        If .true., processing will obtain the NetCDF format first guess fields.
+# 2021-04-05  S. Melchior -- Added diagnostic information just after the cp of
+#        the global first guess file to sgesprep.
 # 
 #
 #
@@ -1530,6 +1532,8 @@ FILES, GUESS NOT ENCODED IN PREPBUFR FILE  --> non-fatal"
                   break
                fi
             fi
+            date
+            ls -l `cat sgesprep${sfx}_pathname | awk '{ print $1 }'`
             cp `cat sgesprep${sfx}_pathname | awk '{ print $1 }'` sgesprep${sfx}
             set +x
             echo
