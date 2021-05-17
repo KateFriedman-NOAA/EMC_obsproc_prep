@@ -3878,7 +3878,7 @@ CDONG -- BELOW NEED TO CHANGE IN THE FUTURE
          IF(IBFMS(OBS2_8(4)).NE.0) THEN                  ! SST1 missing
 
 c -- Buoy SSTs
-            IF(SUBSET(7:8).EQ.'102'.or.SUBSET(7:8).EQ.'103') THEN ! buoys
+            IF(SUBSET(6:8).EQ.'102'.or.SUBSET(6:8).EQ.'103') THEN ! buoys
 C         Retrieve field SST0 from buoy reports originating in BUFR form 
               CALL UFBINT(LUNIT,OBS2_8(4),1,1,IRET,'SST0')
 CDONG            ELSE
