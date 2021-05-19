@@ -87,6 +87,11 @@
 #                                             match cycle time of guess file (avoids
 #                                             wasting time chekcing for files that
 #                                             can never exist). 
+#          2021 April       Melchior      Adpated getges_nc.sh to test that atmf NetCDF
+#                                         guess file is actually completed (checking
+#                                         logf file) prior to committing to cp'ing the
+#                                         file to sgesprep. This primarily impacts
+#                                         rap_prep at cycles 03, 09, 15, 21.
 #####
 #
 ################################################################################
@@ -1386,8 +1391,19 @@ while [[ $fh -le $fhend ]];do
   if [[ `echo $bn | cut -c1` != [a-zA-Z] ]];then
      [[ $cyc -ne $bn ]]  && break 1
   fi
-  [[ $quiet = NO ]]&&echo Checking: $ges >&2
-  [[ -r $ges ]]&&break 2
+  gesbn=`basename $ges`
+  logfbn=$(echo ${gesbn/atm/log})
+  logfbn=$(echo ${logfbn/nc/txt})
+  logf=$dn/$logfbn
+  if [[ $quiet = NO ]]; then
+    echo Checking: $logf >&2
+    echo Checking: $ges >&2
+  fi
+  if [[ -r $logf ]]; then
+    if [[ -r $ges ]]; then
+      break 2
+    fi
+  fi
  done
  fh=$((10#$fh+10#$fhinc))
  [[ $fh -lt 10 ]]&&fh=0$fh

@@ -51,7 +51,8 @@ else
   hname=$(hostname)
   if [[ $hname =~ ^[vmp][0-9] ]] ; then # Dell-p3: venus mars pluto
     module load ips/18.0.5.274
-    module load prod_util/1.1.0
+    #module load prod_util/1.1.0
+    module load prod_util/1.1.6
   else 
     ## On non-phase 3 systems, can simply load prod_util directly
     module load prod_util               # non-Lua Modules system
