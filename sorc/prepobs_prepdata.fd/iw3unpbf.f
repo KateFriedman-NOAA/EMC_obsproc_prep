@@ -521,7 +521,7 @@ C       005068, 005069.
 c 2020-10-15 JWhiting -- added trap to pull dump mnemonics specific to 
 c       BUFR feed buoy data streams so as to properly encode prepbufr 
 c       wave height & frequecy mnemonics (HOWV POWV).  
-c ????-??-?? JWhiting - 
+c 2021-??-?? JWhiting - 
 C     - Fixed ambiguity in trap for buoy SST values (msg types 102-3)
 C     - Assigned input report type values of 524-5 to BUFR-feed ships 
 c       data, for named and unnamed obs, respectively (TAC-feeds remain 
@@ -818,6 +818,7 @@ C          524 - FM94/BUFR format Ship with name
 C          525 - FM94/BUFR format Ship w/o name (rpt id set to "SHIP")
 C          530 - C-MAN platform (BUFR-feed data stream)
 C          531 - C-MAN platform (TAC-feed data stream)
+C          532 - Tide gauge
 C          534 - Coast Guard Tide gauge
 C          540 - Mesonet surface
 C          551 - Sea-level pressure bogus
