@@ -521,7 +521,7 @@ C       005068, 005069.
 c 2020-10-15 JWhiting -- added trap to pull dump mnemonics specific to 
 c       BUFR feed buoy data streams so as to properly encode prepbufr 
 c       wave height & frequecy mnemonics (HOWV POWV).  
-c 2021-??-?? JWhiting - 
+c 2021-03-30 JWhiting - 
 C     - Fixed ambiguity in trap for buoy SST values (msg types 102-3)
 C     - Assigned input report type values of 524-5 to BUFR-feed ships 
 c       data, for named and unnamed obs, respectively (TAC-feeds remain 
@@ -1339,7 +1339,7 @@ C$$$
 
       IF(ITIMES.EQ.0)  THEN
 
-        PRINT'(" ===> IW3UNPBF - WCOSS VERSION: 10-15-2020")'
+        PRINT'(" ===> IW3UNPBF - WCOSS VERSION: 06-24-2021")'
 
 C  THE FIRST TIME IN, INITIALIZE SOME DATA
 C  (NOTE: FORTRAN 77/90 STANDARD DOES NOT ALLOW COMMON BLOCK VARIABLES
@@ -2685,8 +2685,6 @@ C  ---------------
 !_shipsu    nem 001013  #> Ship - manual and automatic, unrestricted |
 !_shipsb    nem 001101  #> Ship - manual and automatic, restricted (BUFR) |
 !_shipub    nem 001113  #> Ship - manual and automatic, unrestricted (BUFR) |
-CDONG            IF(SUBSET(6:8).EQ.'001'.OR.SUBSET(6:8).EQ.'013'.or.
-CDONG     $         SUBSET(6:8).EQ.'101'.OR.SUBSET(6:8).EQ.'113')  THEN
             IF(SUBSET(7:8).EQ.'01'.OR.SUBSET(7:8).EQ.'13')  THEN
                IF(RPID.NE.'SHIP')  THEN
 
@@ -2733,8 +2731,6 @@ C  BUOYS ARRIVING IN WMO FM94/BUFR FORMAT (FIXED)
 C  ----------------------------------------------
     
                ERTUBF = 563
-!jaw        ELSE  IF(SUBSET(6:8).EQ.'004' 
-!jaw +          .OR. SUBSET(6:8).EQ.'104') THEN
             ELSE  IF(SUBSET(6:8).EQ.'004' ) THEN
 
 C  C-MAN PLATFORM (TAC-feed)
@@ -3882,7 +3878,6 @@ c -- Buoy SSTs
             IF(SUBSET(6:8).EQ.'102'.or.SUBSET(6:8).EQ.'103') THEN ! buoys
 C         Retrieve field SST0 from buoy reports originating in BUFR form 
               CALL UFBINT(LUNIT,OBS2_8(4),1,1,IRET,'SST0')
-CDONG            ELSE
             ELSE IF(SUBSET(6:8).EQ.'002') THEN
 C DBUOYs store sub-sfc temp, use 1st lvl if SST1 msg (unless > 10m down)
               CALL UFBINT(LUNIT,OBS2_8(4),2,1,IRET,'STMP DBSS')
@@ -3896,10 +3891,6 @@ C DBUOYs store sub-sfc temp, use 1st lvl if SST1 msg (unless > 10m down)
          CALL UFBINT(LUNIT,OBS2_8( 6),1,1,IRET,'MSST')
 
 c -- BUFR Ships reports need ufbint() mnemonics split up
-cjaw     IF(SUBSET(7:8).EQ.'01'.or.SUBSET(7:8).EQ.'13') THEN ! ships
-
-!jaw     CALL UFBINT(LUNIT,OBS2_8( 8),8,1,IRET,
-!jaw $                'HOVI VTVI PSW1 PSW2 PKWDSP PKWDDR .DTMMXGS MXGS')
          CALL UFBINT(LUNIT,OBS2_8( 8),2,1,IRET,'HOVI VTVI')
          CALL UFBINT(LUNIT,OBS2_8(10),2,1,IRET,'PSW1 PSW2')
          CALL UFBINT(LUNIT,OBS2_8(12),4,1,IRET,

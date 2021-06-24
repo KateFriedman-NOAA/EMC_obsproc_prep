@@ -1,106 +1,7 @@
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-obsproc_prep release X.Y.Z --> released ??? ??, 2021
+obsproc_prep release 5.5.0 --> released ??? ??, 2021
                            --> implemented ??? ??, 2021
 
-     *** DRAFT ***
-
-files:
-   obsproc_prep/fix/glerldict.lmd
-   obsproc_prep/fix/prepobs_anow.bufrtable
-   obsproc_prep/fix/prepobs_cqc_statbge
-   obsproc_prep/fix/prepobs_landc
-   obsproc_prep/fix/prepobs_prep.bufrtable
-   obsproc_prep/fix/syndat_syndata.slmask.t126.gaussian
-   obsproc_prep/fix/syndat_weight
-   obsproc_prep/sorc/prepobs_cqcbufr.fd/cqcbufr.f
-   obsproc_prep/sorc/prepobs_cqcbufr.fd/makefile
-   obsproc_prep/sorc/prepobs_cqcbufr.fd/radcor.f
-   obsproc_prep/sorc/prepobs_cqcvad.fd/cqcvad.f
-   obsproc_prep/sorc/prepobs_cqcvad.fd/makefile
-   obsproc_prep/sorc/prepobs_glerladj.fd/glerldictmod.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/glerlmain.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/indict.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/landtowater.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/makefile
-   obsproc_prep/sorc/prepobs_glerladj.fd/spd_to_dir.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/td_to_q.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/uv_to_sd.f90
-   obsproc_prep/sorc/prepobs_glerladj.fd/uz.f
-   obsproc_prep/sorc/prepobs_glerladj.fd/uzl.f
-   obsproc_prep/sorc/prepobs_glerladj.fd/watertoland.f90
-   obsproc_prep/sorc/prepobs_listheaders.fd/listheaders.f90
-   obsproc_prep/sorc/prepobs_listheaders.fd/makefile
-   obsproc_prep/sorc/prepobs_monoprepbufr.fd/makefile
-   obsproc_prep/sorc/prepobs_monoprepbufr.fd/monoprepbufr.f90
-   obsproc_prep/sorc/prepobs_mpcopybufr.fd/makefile
-   obsproc_prep/sorc/prepobs_mpcopybufr.fd/mpcopybufr.f90
-   obsproc_prep/sorc/prepobs_oiqcbufr.fd/makefile
-   obsproc_prep/sorc/prepobs_oiqcbufr.fd/oiqcbufr.f
-   obsproc_prep/sorc/prepobs_prepacpf.fd/makefile
-   obsproc_prep/sorc/prepobs_prepacpf.fd/prepacpf.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/indexc40.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/input_acqc.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/makefile
-   obsproc_prep/sorc/prepobs_prepacqc.fd/output_acqc_noprof.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/output_acqc_prof.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pietc.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pkind.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pmat.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pmat2.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pmat3.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/prepacqc.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/pspl.f90
-   obsproc_prep/sorc/prepobs_prepacqc.fd/sub2mem_mer.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/sub2mem_um.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/tranQCflags.f
-   obsproc_prep/sorc/prepobs_prepanow.fd/makefile
-   obsproc_prep/sorc/prepobs_prepanow.fd/prepanow.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/inc_w3unpkb7.inc
-   obsproc_prep/sorc/prepobs_prepdata.fd/iw3unpbf.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/makefile
-   obsproc_prep/sorc/prepobs_prepdata.fd/prepdata.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3atovsunp.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3cnvxtovs.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3rtovsunp.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3unpkb7.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovseds.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/w3xtovsmnd.f
-   obsproc_prep/sorc/prepobs_prepdata.fd/wordlength.f
-   obsproc_prep/sorc/prepobs_prevents.fd/gblevents_cdas.f
-   obsproc_prep/sorc/prepobs_prevents.fd/makefile
-   obsproc_prep/sorc/prepobs_prevents.fd/prevents.f
-   obsproc_prep/sorc/prepobs_profcqc.fd/makefile
-   obsproc_prep/sorc/prepobs_profcqc.fd/profcqc.f
-   obsproc_prep/sorc/syndat_syndata.fd/makefile
-   obsproc_prep/sorc/syndat_syndata.fd/syndata.f
-   obsproc_prep/sorc/build.sh
-   obsproc_prep/sorc/clean.sh
-   obsproc_prep/sorc/clobber.sh
-   obsproc_prep/sorc/install.sh
-   obsproc_prep/sorc/load_libs.rc
-   obsproc_prep/sorc/README.build
-   obsproc_prep/sorc/setlibs.rc
-   obsproc_prep/ush/prepobs_cqcbufr.sh
-   obsproc_prep/ush/prepobs_cqcvad.sh
-   obsproc_prep/ush/getges_driver.sh
-   obsproc_prep/ush/getges.sh
-   obsproc_prep/ush/getges_nc.sh
-   obsproc_prep/ush/getges_sig.sh
-   obsproc_prep/ush/prepobs_glerladj.sh
-   obsproc_prep/ush/prepobs_makeprepbufr.sh
-   obsproc_prep/ush/prepobs_oiqcbufr.sh
-   obsproc_prep/ush/prepobs_prepacqc.sh
-   obsproc_prep/ush/prepobs_prevents.sh
-   obsproc_prep/ush/prepobs_profcqc.sh
-   obsproc_prep/ush/prepobs_syndata.sh
-
-( A - added,  M - modified, D - deleted)
-
-
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-obsproc_prep release 5.4.1 --> released Apr 05, 2021
-                           --> implemented Apr 08, 2021
 files:
    obsproc_prep/fix/glerldict.lmd
    obsproc_prep/fix/prepobs_anow.bufrtable
@@ -182,16 +83,111 @@ files:
    obsproc_prep/ush/prepobs_cqcvad.sh
    obsproc_prep/ush/getges_driver.sh
    obsproc_prep/ush/getges.sh
- M obsproc_prep/ush/getges_nc.sh
+   obsproc_prep/ush/getges_nc.sh
    obsproc_prep/ush/getges_sig.sh
    obsproc_prep/ush/prepobs_glerladj.sh
- M obsproc_prep/ush/prepobs_makeprepbufr.sh
+   obsproc_prep/ush/prepobs_makeprepbufr.sh
    obsproc_prep/ush/prepobs_oiqcbufr.sh
    obsproc_prep/ush/prepobs_prepacqc.sh
    obsproc_prep/ush/prepobs_prevents.sh
    obsproc_prep/ush/prepobs_profcqc.sh
    obsproc_prep/ush/prepobs_syndata.sh
+
 ( A - added,  M - modified, D - deleted)
+
+
+ Source code and build changes (in sorc directory):
+   prepobs_prepdata.fd/iw3unpbf.f:
+    - In function R04UBF, fixed ambiguity in trap for buoy SST values
+      (msg types 102, 103).
+    - In function R02UBF:
+      - Assigned input report type values of 524 and 525 to BUFR-feed
+        ships data, for named and unnamed obs respectively (TAC-feeds
+        remain as 522 and 523).
+      - Assigned input report type value of 530 to BUFR-feed C-MAN platform
+        reports (TAC-feed remains as 531).
+   prepobs_prepdata.fd/prepdata.f:
+    - Updated subroutine ISSEL to include BUFR format ships and cman data.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (all)
+   bufr   11.3.0 (all)
+   w3emc   2.4.0 (prepobs_cqcbufr, prepobs_prepacpf, prepobs_prepacqc,
+                  prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   bacio   2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sp      2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sigio   2.1.0 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   nemsio  2.2.3 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   netcdf  4.7.4 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   hdf5   1.10.6 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep.  Jobs executing this version of
+   obsproc_prep will be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep.
+
+
+ Special Instructions:
+ ---------------------
+?? This is part of OBSPROC.v15.?.?.
+   This must be implemented on Dell-p3 & Cray.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.1.1 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v2.4.0 of obsproc_shared_bufr_dumplist,
+      v2.1.3 of obsproc_shared_bufr_remorest.
+
+   Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
+   needed. But note, please update:
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_cdas.ver,
+     obsproc_dump_monitor.ver,
+   to set obsproc_prep_ver to v5.5.0.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep release 5.4.1 --> released Apr 05, 2021
+                           --> implemented Apr 08, 2021
+files:
+ M obsproc_prep/sorc/prepobs_prepdata.fd/iw3unpbf.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/prepdata.f
+ M obsproc_prep/ush/getges_nc.sh
+ M obsproc_prep/ush/prepobs_makeprepbufr.sh
+
+( A - added,  M - modified, D - deleted)
+
+
  Source code and build changes (in sorc directory):
    prepobs_prepdata.fd/iw3unpbf.f,
    prepobs_prepdata.fd/prepdata.f:
@@ -219,6 +215,7 @@ files:
  ---------------
   (For specific network changes see " Output changes" in Release Notes for that
    network, if that network executes this version of obsproc_prep.)
+
  Libraries:
  ----------
    w3nco   2.0.6 (all)
@@ -231,17 +228,21 @@ files:
    nemsio  2.2.3 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
    netcdf  4.7.4 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
    hdf5   1.10.6 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+
  Build Instructions:
  -------------------
    - See sorc/README.build
+
  Preimplementation Testing Requirements:
  ---------------------------------------
    There are no jobs in obsproc_prep.  Jobs executing this version of
    obsproc_prep will be tested.
+
  Dissemination:
  --------------
    See information about dissemination in the release notes for
    obsproc_<NETWORK> packages which execute this version of obsproc_prep.
+
  Special Instructions:
  ---------------------
    This is part of OBSPROC.v15.2.0.
