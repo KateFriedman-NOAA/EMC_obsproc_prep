@@ -528,6 +528,8 @@ c       data, for named and unnamed obs, respectively (TAC-feeds remain
 c       as 522-3).
 C     - Assigned input report type value of 530 to BUFR-feed C-MAN
 C       reports.
+C 2021-07-14 J. Dong -- In function R04UBF, added code to encode the 
+C       cloud data for the BUFR-feed ships data.
 C
 C
 C USAGE:    II = IW3UNPBF(NUNIT, OBS, STNID, CRES1, CRES2, CBULL, OBS2,
