@@ -98,8 +98,9 @@ files:
 
  Source code and build changes (in sorc directory):
    prepobs_prepdata.fd/iw3unpbf.f:
-    - In function R04UBF, fixed ambiguity in trap for buoy SST values
-      (msg types 102, 103).
+    - In function R04UBF: 
+      - Fixed ambiguity in trap for buoy SST values (msg types 102, 103).
+      - Added code to encode the cloud data for BUFR-feed ships data. 
     - In function R02UBF:
       - Assigned input report type values of 524 and 525 to BUFR-feed
         ships data, for named and unnamed obs respectively (TAC-feeds
