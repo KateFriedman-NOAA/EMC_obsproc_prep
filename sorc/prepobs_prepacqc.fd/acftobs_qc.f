@@ -18815,6 +18815,7 @@ c     $,            airdir_track        ! airspeed direction between first and l
       real         vspd_thresh         ! threshold vertical speed of aircraft
      $,            vspd_bounce         ! threshold vertical speed used in bounce test
 c
+      integer      maxll,llim          ! parameterized limits for indx_save  CH 2021
       parameter   (maxll=1000,llim=200)
       integer      indx_save(maxll)    ! pointer indices for rejected reports
      $,            ll                  ! index for indx_save
