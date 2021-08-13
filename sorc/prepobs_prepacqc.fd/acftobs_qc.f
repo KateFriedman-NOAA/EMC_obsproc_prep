@@ -18403,6 +18403,11 @@ c     As data resolution has increased, some aspects of the track (such
 c     as deciding a point is going backwards) have become less meaningful.
 c     Changes were made to reduce the number of false positives.
 c
+c     C. Hill/ D. Stokes 08/13/21
+c     The array size of indx_save is increased (from 200 to 1000).
+c     A working limit of 200 for indx_save is retained as a defined
+c     parameter for all quality checks preceding order_qc.
+c
       implicit none
 c
 c Declaration statements
@@ -18810,7 +18815,8 @@ c     $,            airdir_track        ! airspeed direction between first and l
       real         vspd_thresh         ! threshold vertical speed of aircraft
      $,            vspd_bounce         ! threshold vertical speed used in bounce test
 c
-      integer      indx_save(200)      ! pointer indices for rejected reports
+      parameter   (maxll=1000,llim=200)
+      integer      indx_save(maxll)    ! pointer indices for rejected reports
      $,            ll                  ! index for indx_save
      $,            keep                ! variable used in saving indices
      $,            knt_bad             ! number of reports in potential second flight
@@ -21046,7 +21052,7 @@ c ------------------------------------------------------
 c
                 c_qc(ii)(2:2) = 'K'
                 ll = ll + 1
-                if(ll.gt.200) then
+                if(ll.gt.llim) then
                   write(io8,*) 'll limit exceeded--indx not saved!',
      $              ii
                 else
@@ -21078,7 +21084,7 @@ c ---------------------------------------------------
 c
                 c_qc(iip1)(2:2) = 'K'
                 ll = ll + 1
-                if(ll.gt.200) then
+                if(ll.gt.llim) then
                   write(io8,*) 'll limit exceeded--indx not saved!',
      $              iip1
                 else
@@ -21124,7 +21130,7 @@ c
                 c_qc(iip1)(1:1) = 'p'
                 c_qc(iip1)(3:4) = 'II'
                 ll = ll + 1
-                if(ll.gt.200) then
+                if(ll.gt.llim) then
                   write(io8,*) 'll limit exceeded--indx not saved!',
      $              iip1
                 else
@@ -21205,7 +21211,7 @@ c
 c
                 else
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -21284,7 +21290,7 @@ c
 c
                 else
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -21376,7 +21382,7 @@ c
                     c_qc(iip1)(5:5) = 'I'
                   endif
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -21422,7 +21428,7 @@ c
                   c_qc(ii)(1:1) = 'P'
                   c_qc(ii)(3:4) = 'II'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -21433,7 +21439,7 @@ c
                   c_qc(iip1)(1:1) = 'P'
                   c_qc(iip1)(3:4) = 'II'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22186,7 +22192,7 @@ c               --------------------------------------------
 c
                   c_qc(iip1)(2:2) = 'K'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22196,7 +22202,7 @@ c
 c
                   c_qc(iip2)(2:2) = 'K'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!'
      $                ,iip2
                   else
@@ -22267,7 +22273,7 @@ c
                   c_qc(ii)(3:4) = 'II'
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22324,7 +22330,7 @@ c
                   c_qc(iip1)(3:4) = 'II'
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22422,7 +22428,7 @@ c
                   c_qc(iip1)(3:4) = 'II'
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!'
      $                ,iip1
                   else
@@ -22433,7 +22439,7 @@ c
                   c_qc(iip2)(1:1) = 'P'
                   c_qc(iip2)(3:4) = 'II'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!'
      $                ,iip2
                   else
@@ -22472,7 +22478,7 @@ c
                   c_qc(iip1)(3:4) = 'II'
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22503,7 +22509,7 @@ c
                   c_qc(ii)(1:1) = 'P'
                   c_qc(ii)(3:4) = 'II'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22514,7 +22520,7 @@ c
                   c_qc(iip1)(1:1) = 'P'
                   c_qc(iip1)(3:4) = 'II'
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22561,7 +22567,7 @@ c
                   endif
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22577,7 +22583,7 @@ c
                   endif
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22723,7 +22729,7 @@ c
                     c_qc(iip1)(5:5) = 'I'
                   endif
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22738,7 +22744,7 @@ c
                     c_qc(iip2)(5:5) = 'I'
                   endif
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip2
                   else
@@ -22793,7 +22799,7 @@ c
                     c_qc(ii)(5:5) = 'I'
                   endif
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22849,7 +22855,7 @@ c
                     c_qc(iip1)(5:5) = 'I'
                   endif
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -22885,7 +22891,7 @@ c
                   endif
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                ii
                   else
@@ -22901,7 +22907,7 @@ c
                   endif
 c
                   ll = ll + 1
-                  if(ll.gt.200) then
+                  if(ll.gt.llim) then
                     write(io8,*) 'll limit exceeded--indx not saved!',
      $                iip1
                   else
@@ -23315,6 +23321,8 @@ c
 c                write(io8,*) 'Skipping report from 2nd flt',ii
                 ll = ll + 1
                 indx_save(ll) = ii
+c                               Adding condition for ll increment CH 2021
+                if(ll.ge.maxll) cycle
 c
 c             If report not rejected...
 c             -------------------------
