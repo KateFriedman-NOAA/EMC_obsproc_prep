@@ -71,6 +71,12 @@ c                      are enabled.  When t_prcn has a missing value,
 c                      1.0000000E+09, multiplying by 100 exceeds the
 c                      32-bit signed integer maximum, 2,147,483,647. 
 c
+c 2021-08-13  C. Hill / D. Stokes --
+c                    - Modified subroutine ordchk_qc to increase the 
+c                      array size of indx_save (from 200 to 1000).
+c                      A working limit of 200 for indx_save is retained as a defined
+c                      parameter for all quality checks preceding order_qc.
+c
 c   BEST VIEWED WITH 94-CHARACTER WIDTH WINDOW
 ccccc
 c

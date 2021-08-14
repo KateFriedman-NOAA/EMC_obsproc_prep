@@ -36,7 +36,7 @@ files:
    obsproc_prep/sorc/prepobs_oiqcbufr.fd/oiqcbufr.f
    obsproc_prep/sorc/prepobs_prepacpf.fd/makefile
    obsproc_prep/sorc/prepobs_prepacpf.fd/prepacpf.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
+ M obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/indexc40.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/input_acqc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/makefile
@@ -97,6 +97,11 @@ files:
 
 
  Source code and build changes (in sorc directory):
+   prepobs_prepacqc.fd/acftobs_qc.f:
+    - In subroutine ordchek_qc:
+      - The array size of indx_save was increased (from 200 to 1000).
+      - A working limit of 200 for indx_save was retained as a defined
+        parameter for all quality checks preceding order_qc.
    prepobs_prepdata.fd/iw3unpbf.f:
     - In function R04UBF: 
       - Fixed ambiguity in trap for buoy SST values (msg types 102, 103).
