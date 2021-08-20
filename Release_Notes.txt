@@ -1,6 +1,6 @@
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-obsproc_prep release 5.4.1 --> released Apr 05, 2021
-                           --> implemented Apr 08, 2021
+obsproc_prep release 5.5.0 --> released Jul 16, 2021
+                           --> implemented Aug 18, 2021
 
 files:
    obsproc_prep/fix/glerldict.lmd
@@ -36,7 +36,7 @@ files:
    obsproc_prep/sorc/prepobs_oiqcbufr.fd/oiqcbufr.f
    obsproc_prep/sorc/prepobs_prepacpf.fd/makefile
    obsproc_prep/sorc/prepobs_prepacpf.fd/prepacpf.f
-   obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
+ M obsproc_prep/sorc/prepobs_prepacqc.fd/acftobs_qc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/indexc40.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/input_acqc.f
    obsproc_prep/sorc/prepobs_prepacqc.fd/makefile
@@ -83,10 +83,10 @@ files:
    obsproc_prep/ush/prepobs_cqcvad.sh
    obsproc_prep/ush/getges_driver.sh
    obsproc_prep/ush/getges.sh
- M obsproc_prep/ush/getges_nc.sh
+   obsproc_prep/ush/getges_nc.sh
    obsproc_prep/ush/getges_sig.sh
    obsproc_prep/ush/prepobs_glerladj.sh
- M obsproc_prep/ush/prepobs_makeprepbufr.sh
+   obsproc_prep/ush/prepobs_makeprepbufr.sh
    obsproc_prep/ush/prepobs_oiqcbufr.sh
    obsproc_prep/ush/prepobs_prepacqc.sh
    obsproc_prep/ush/prepobs_prevents.sh
@@ -97,30 +97,24 @@ files:
 
 
  Source code and build changes (in sorc directory):
-   prepobs_prepdata.fd/iw3unpbf.f,
+   prepobs_prepacqc.fd/acftobs_qc.f:
+    - In subroutine ordchek_qc:
+      - The array size of indx_save was increased (from 200 to 1000).
+      - A working limit of 200 for indx_save was retained as a defined
+        parameter for all quality checks preceding order_qc.
+   prepobs_prepdata.fd/iw3unpbf.f:
+    - In function R04UBF: 
+      - Fixed ambiguity in trap for buoy SST values (msg types 102, 103).
+      - Added code to encode the cloud data for BUFR-feed ships data. 
+    - In function R02UBF:
+      - Assigned input report type values of 524 and 525 to BUFR-feed
+        ships data, for named and unnamed obs respectively (TAC-feeds
+        remain as 522 and 523).
+      - Assigned input report type value of 530 to BUFR-feed C-MAN platform
+        reports (TAC-feed remains as 531).
    prepobs_prepdata.fd/prepdata.f:
-    - modified to restore features from v5.3.0 that were inadvertently
-      omitted in v5.4.0.
-      - added trap to pull dump mnemonics specific to BUFR feed buoy
-        data streams so as to properly encode prepbufr wave height and
-        frequency mnemonics (HOWV POWV)
-        BENEFIT: RTMA/URMA will work as intedned when those networks
-                 advance beyond obsproc_prep.v5.3.0.
+    - Updated subroutine ISSEL to include BUFR format ships and cman data.
 
-
- USH script changes:
-   getges_nc.sh:
-    - Modified to include a check on the logf file before committing to
-      the copy of the atmf NetCDF first guess file to prepdata processing.
-      This check was necessary because the NetCDF first guess files take
-      longer to create, which was causing failures in rap_prep jobs for
-      03, 09, 15, and 21Z cycles.
-      BENEFIT: rap_prep jobs will no longer fail when attempting to use
-               the latest available, though partially written, NetCDF
-               first guess file.  Instead, b/c the log file will not yet
-               be available, rap_prep processing will process an older
-               first guess file that is available.
- 
 
  Output changes:
  ---------------
@@ -161,13 +155,109 @@ files:
 
  Special Instructions:
  ---------------------
-   This is part of OBSPROC.v15.2.0.
+   This is part of OBSPROC.v16.1.0.
    This must be implemented on Dell-p3 & Cray.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.1.1 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v2.4.0 of obsproc_shared_bufr_dumplist,
+      v2.1.3 of obsproc_shared_bufr_remorest.
 
    Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
    needed. But note, please update:
+     obsproc_global.ver,
+     obsproc_nam.ver,
      obsproc_rap.ver,
-   to set obsproc_prep_ver to v5.4.0.
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_cdas.ver,
+     obsproc_dump_monitor.ver,
+   to set obsproc_prep_ver to v5.5.0.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep release 5.4.1 --> released Apr 05, 2021
+                           --> implemented Apr 08, 2021
+files:
+ M obsproc_prep/sorc/prepobs_prepdata.fd/iw3unpbf.f
+ M obsproc_prep/sorc/prepobs_prepdata.fd/prepdata.f
+ M obsproc_prep/ush/getges_nc.sh
+ M obsproc_prep/ush/prepobs_makeprepbufr.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Source code and build changes (in sorc directory):
+   prepobs_prepdata.fd/iw3unpbf.f,
+   prepobs_prepdata.fd/prepdata.f:
+    - modified to restore features from v5.3.0 that were inadvertently
+      omitted in v5.4.0.
+      - added trap to pull dump mnemonics specific to BUFR feed buoy
+        data streams so as to properly encode prepbufr wave height and
+        frequency mnemonics (HOWV POWV)
+        BENEFIT: RTMA/URMA will work as intedned when those networks
+                 advance beyond obsproc_prep.v5.3.0.
+ USH script changes:
+   getges_nc.sh:
+    - Modified to include a check on the logf file before committing to
+      the copy of the atmf NetCDF first guess file to prepdata processing.
+      This check was necessary because the NetCDF first guess files take
+      longer to create, which was causing failures in rap_prep jobs for
+      03, 09, 15, and 21Z cycles.
+      BENEFIT: rap_prep jobs will no longer fail when attempting to use
+               the latest available, though partially written, NetCDF
+               first guess file.  Instead, b/c the log file will not yet
+               be available, rap_prep processing will process an older
+               first guess file that is available.
+ 
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep.)
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (all)
+   bufr   11.3.0 (all)
+   w3emc   2.4.0 (prepobs_cqcbufr, prepobs_prepacpf, prepobs_prepacqc,
+                  prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   bacio   2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sp      2.0.2 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   sigio   2.1.0 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   nemsio  2.2.3 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   netcdf  4.7.4 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+   hdf5   1.10.6 (prepobs_prepdata, prepobs_prevents, syndat_syndata)
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep.  Jobs executing this version of
+   obsproc_prep will be tested.
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.2.0.
+   This must be implemented on Dell-p3 & Cray.
+   Since there are no jobs in obsproc_prep, an obsproc_prep.ver file is not
+   needed. But note, please update:
+     obsproc_rap.ver,
+   to set obsproc_prep_ver to v5.4.1.
+
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 obsproc_prep release 5.4.0 --> released Oct 09, 2020
@@ -200,7 +290,7 @@ files:
     - Updated W3TAGB arguments.
    syndat_syndata.fd/syndata.f:
     - The distance threshold for inner core drosponde data reduced to 55km
-      (from 111km or 3*RMW). A 32 m/s wind threshold was added. 
+      (from 111km or 3*RMW). A 32 m/s wind threshold was added.
       BENEFIT: more inner core data will be used and assimilated in GFSv16.
    build.sh:
     - added intel-haswell for Cray-XC40.
