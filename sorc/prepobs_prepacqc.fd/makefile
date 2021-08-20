@@ -41,7 +41,7 @@ OBJS =   prepacqc.o acftobs_qc.o tranQCflags.o output_acqc_prof.o output_acqc_no
 # DEBUG         Flags for extra debugging
 # DEBUG2        Flags for even more extra debugging
 
-FC = ifort
+FC = mpiifort
 #LDFLAGS = -Xlinker -t
 #LDFLAGS = -Xlinker -M
 LIBS = ${W3NCO_LIB4} ${W3EMC_LIB4} ${BUFR_LIB4}

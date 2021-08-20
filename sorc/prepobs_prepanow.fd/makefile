@@ -13,7 +13,7 @@
 SRCS=		prepanow.f 
 OBJS=		$(SRCS:.f=.o)
 
-FC=		ifort
+FC=		mpiifort
 #LIBS=		-L/nwprod/lib -lw3nco_v2.0.6_4 -lbufr_v10.2.5_4_64
 LIBS=		${W3NCO_LIB4} ${BUFR_LIB4}
 
