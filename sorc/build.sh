@@ -31,38 +31,20 @@ echo "$lab: welcome to Obsproc_PREP sorc build script ($(date))"
 #set -x
 set -e    # fail if an error is hit so that errors do not go unnoticed
 
-if [[ "$SITE" =~ (theia|THEIA) ]]; then
-  sys_tp=Cray-CS400
-  . /apps/lmod/lmod/init/sh     # may be needed for some users
-elif [[ "$SITE" =~ (hera|HERA) ]]; then
+##  determine system/phase
+hname=$(hostname)
+
+if [[ $hname =~ ^[vmp][0-9] ]] ; then # Dell-p3: venus mars pluto
+  sys_tp=Dell-p3
+elif [[ $hname =~ ^[h] ]] ; then # Hera
   sys_tp=HERA
-else
-  ##  determine system/phase
+elif [[ $hname =~ ^[f] ]] ; then # Jet
+  sys_tp=JET
+elif [[ $hname =~ ^[O] ]] ; then # Orion
+  sys_tp=ORION
+fi # determine system
 
-  module purge
-
-  ## On Phase 3 with Lua Modules, loading prod_util without preloading
-  ## dependent modules will fail.  This means that we need to know the
-  ## system in order to be able to run the getsystems.pl utility so as
-  ## to determine the system.  To overcome this circular logic, use
-  ## hostname to do special loading of the prod_util module so as to 
-  ## run the getsystems.pl utility.
-
-  hname=$(hostname)
-  if [[ $hname =~ ^[vmp][0-9] ]] ; then # Dell-p3: venus mars pluto
-    module load ips/18.0.5.274
-    #module load prod_util/1.1.0
-    module load prod_util/1.1.6
-  else 
-    ## On non-phase 3 systems, can simply load prod_util directly
-    module load prod_util               # non-Lua Modules system
-  fi # if hname starts w/ [vmp][digit]
-
-  sys_tp=$(getsystem.pl -tp)
-  echo "$lab: running on $sys_tp"
-fi # if Theia
-
-#echo "$lab: db exit" ; exit
+echo "$lab: running on $sys_tp"
 
 module purge
 
@@ -82,19 +64,37 @@ case $sys_tp in
    module load impi/5.1.2.150
    ;;
  Dell-p3)
-   module load ips/18.0.5.274    # req'd for bufr
-   module load impi/18.0.1       # req'd for w3emc
+   module use /usrx/local/nceplibs/dev/hpc-stack/libs/hpc-stack/modulefiles/stack
+   module load hpc/1.1.0
+   module load hpc-ips/18.0.1.163
+   module load hpc-impi/18.0.1
    ;;
  HERA)
-   module load intel/18.0.5.274
-   module load impi/2019.0.4
+   module use /scratch2/NCEPDEV/nwprod/hpc-stack/libs/hpc-stack/modulefiles/stack
+   module load hpc/1.1.0
+   module load hpc-intel/18.0.5.274
+   module load hpc-impi/2018.0.4
+   ;;
+ JET)
+   module use /lfs4/HFIP/hfv3gfs/nwprod/hpc-stack/libs/modulefiles/stack
+   module load hpc/1.1.0
+   module load hpc-intel/18.0.5.274
+   module load hpc-impi/2018.4.274
+   ;;
+ ORION)
+   module use /apps/contrib/NCEP/libs/hpc-stack/modulefiles/stack
+   module load hpc/1.1.0
+   module load hpc-intel/2018.4
+   module load hpc-impi/2018.4
    ;;
  *) echo "$lab: unexpected system.  Update for $sys_tp";
     echo "$lab: exiting" ; exit ;;
 esac
 
 source ./load_libs.rc  # use modules to set library related environment variables
-#source ./setlibs.rc  # use this if existing library modules don't quite cover all that is needed.
+
+export NETCDF_LDFLAGS="-L${NETCDF_ROOT}/lib -lnetcdff -lnetcdf -L${HDF5_ROOT}/lib -lhdf5_hl -lhdf5 -L${ZLIB_ROOT}/lib -lz -ldl -lm"
+export NETCDF_INCLUDES="-I${NETCDF_ROOT}/include"
 
 echo ; module list
 
