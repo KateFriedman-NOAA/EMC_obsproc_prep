@@ -40,7 +40,7 @@ SRCS = glerldictmod.f90 glerlmain.f90 landtowater.f90 spd_to_dir.f90 td_to_q.f90
 # DEBUG         Flags for extra debugging
 # DEBUG2        Flags for even more extra debugging
 
-FC = ifort
+FC = mpiifort
 #LDFLAGS = 
 LIBS = ${W3NCO_LIB4} ${BUFR_LIB4}
 CMD = prepobs_glerladj

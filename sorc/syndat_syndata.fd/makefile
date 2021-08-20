@@ -41,11 +41,11 @@ OBJS =  syndata.o
 # DEBUG         Flags for extra debugging
 # DEBUG2        Flags for even more extra debugging
 
-FC = ifort
+FC = mpiifort
 #LDFLAGS = -Xlinker -t -mkl
 #LDFLAGS = -Xlinker -M -mkl
-LDFLAGS = -mkl
-LIBS = ${W3EMC_LIB4} ${NEMSIO_LIB} ${BUFR_LIB4} ${W3NCO_LIB4} ${SIGIO_LIB4} ${SP_LIB4} ${BACIO_LIB4} ${NETCDF_LDFLAGS}
+LDFLAGS = -mkl ${NETCDF_INCLUDES}
+LIBS = ${W3EMC_LIB4} ${NEMSIO_LIB} ${BUFR_LIB4} ${W3NCO_LIB4} ${SIGIO_LIB} ${SP_LIB4} ${BACIO_LIB4} ${NETCDF_LDFLAGS}
 CMD = syndat_syndata
 
 # For now DO NOT comment out DEBUG2 option - want to run in ops with debugger on to make sure
